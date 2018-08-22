@@ -1,0 +1,5 @@
+package enums;
+
+public enum EnumMessageType {
+	ENTRADA, SAIDA, REQUISICAO, RESPOSTA_ENTRADA, RESPOSTA_REQUISICAO
+}
