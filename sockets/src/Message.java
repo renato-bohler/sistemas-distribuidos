@@ -34,7 +34,14 @@ public class Message implements Serializable {
 	// Deve ser preenchido se tipoMensagem for ENTRADA ou RESPOSTA_ENTRADA
 	private byte[] chavePublica;
 
-	// Construtor para REQUISICAO
+	/**
+	 * Construtor para o tipo de mensagem REQUISICAO
+	 * 
+	 * @param tipoMensagem
+	 * @param recurso
+	 * @param remetente
+	 * @throws Exception
+	 */
 	public Message(EnumMessageType tipoMensagem, EnumResourceId recurso, String remetente) throws Exception {
 		if (remetente == null || remetente.isEmpty()) {
 			throw new Exception("Toda mensagem deve conter o remetente");
@@ -54,7 +61,15 @@ public class Message implements Serializable {
 		this.remetente = remetente;
 	}
 
-	// Construtor para RESPOSTA_REQUISICAO
+	/**
+	 * Construtor para o tipo de mensagem RESPOSTA_REQUISICAO
+	 * 
+	 * @param tipoMensagem
+	 * @param recurso
+	 * @param situacaoRecurso
+	 * @param remetente
+	 * @throws Exception
+	 */
 	public Message(EnumMessageType tipoMensagem, EnumResourceId recurso, EnumResourceStatus situacaoRecurso,
 			String remetente) throws Exception {
 		if (remetente == null || remetente.isEmpty()) {
@@ -80,7 +95,14 @@ public class Message implements Serializable {
 		this.remetente = remetente;
 	}
 
-	// Construtor para ENTRADA, SAIDA e RESPOSTA_ENTRADA
+	/**
+	 * Construtor para o tipo de mensagem ENTRADA, SAIDA e RESPOSTA_ENTRADA
+	 * 
+	 * @param tipoMensagem
+	 * @param chavePublica
+	 * @param remetente
+	 * @throws Exception
+	 */
 	public Message(EnumMessageType tipoMensagem, byte[] chavePublica, String remetente) throws Exception {
 		if (remetente == null || remetente.isEmpty()) {
 			throw new Exception("Toda mensagem deve conter o remetente");
@@ -106,6 +128,13 @@ public class Message implements Serializable {
 		this.remetente = remetente;
 	}
 
+	/**
+	 * Assina a mensagem com a chave privada informada
+	 * 
+	 * @param chavePrivadaBytes
+	 * @return Message
+	 * @throws Exception
+	 */
 	public Message assinar(byte[] chavePrivadaBytes) throws Exception {
 		PrivateKey chavePrivada = RSAUtils.gerarChavePrivadaDeBytes(chavePrivadaBytes);
 
@@ -114,6 +143,12 @@ public class Message implements Serializable {
 		return this;
 	}
 
+	/**
+	 * Valida a mensagem com a chave pública informada
+	 * 
+	 * @param chavePublicaBytes
+	 * @throws Exception
+	 */
 	public void validar(byte[] chavePublicaBytes) throws Exception {
 		if (chavePublicaBytes == null) {
 			throw new Exception("Impossível validar mensagem sem a chave pública");
@@ -136,6 +171,9 @@ public class Message implements Serializable {
 		}
 	}
 
+	/**
+	 * Converte uma mensagem para String, para ser mostrada no terminal
+	 */
 	@Override
 	public String toString() {
 		final String PREFIXO = "   >> ";
@@ -168,6 +206,13 @@ public class Message implements Serializable {
 		return sb.toString();
 	}
 
+	/**
+	 * Transforma Message para uma sequência de bytes
+	 * 
+	 * @param mensagem
+	 * @return byte[]
+	 * @throws Exception
+	 */
 	public static byte[] toBytes(Message mensagem) throws Exception {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutput out = null;
@@ -185,6 +230,13 @@ public class Message implements Serializable {
 		}
 	}
 
+	/**
+	 * Transforma uma sequencia de bytes para Message
+	 * 
+	 * @param bytes
+	 * @return Message
+	 * @throws Exception
+	 */
 	public static Message fromBytes(byte[] bytes) throws Exception {
 		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
 		ObjectInput in = null;
