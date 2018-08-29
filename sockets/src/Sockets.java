@@ -1,3 +1,11 @@
+
+/*
+ * TODO:
+ * - enviar mensagem de saída
+ * - atualizar a lista ao receber mensagem de saída
+ * - executar somente quando houverem 3 ou mais peers
+ * - implementar controle de concorrẽncia (Ricart e Agrawala)
+ */
 import java.security.KeyPair;
 import java.util.Scanner;
 import java.util.UUID;
