@@ -96,7 +96,7 @@ public class Message implements Serializable {
 	}
 
 	/**
-	 * Construtor para o tipo de mensagem ENTRADA, SAIDA e RESPOSTA_ENTRADA
+	 * Construtor para o tipo de mensagem ENTRADA e RESPOSTA_ENTRADA
 	 * 
 	 * @param tipoMensagem
 	 * @param chavePublica
@@ -118,13 +118,30 @@ public class Message implements Serializable {
 			throw new Exception("Mensagem de anúncio ou resposta de entrada deve preencher a chave pública");
 		}
 
-		if (tipoMensagem.equals(EnumMessageType.SAIDA) && (chavePublica != null)) {
-			throw new Exception("Mensagem de anúncio de saída não deve preencher a chave pública");
+		this.timestamp = System.currentTimeMillis();
+		this.tipoMensagem = tipoMensagem;
+		this.chavePublica = chavePublica;
+		this.remetente = remetente;
+	}
+
+	/**
+	 * Construtor para o tipo de mensagem SAIDA
+	 * 
+	 * @param tipoMensagem
+	 * @param remetente
+	 * @throws Exception
+	 */
+	public Message(EnumMessageType tipoMensagem, String remetente) throws Exception {
+		if (remetente == null || remetente.isEmpty()) {
+			throw new Exception("Toda mensagem deve conter o remetente");
+		}
+
+		if (!tipoMensagem.equals(EnumMessageType.SAIDA)) {
+			throw new Exception("Construtor incompatível com o tipo de mensagem");
 		}
 
 		this.timestamp = System.currentTimeMillis();
 		this.tipoMensagem = tipoMensagem;
-		this.chavePublica = chavePublica;
 		this.remetente = remetente;
 	}
 

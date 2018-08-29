@@ -89,7 +89,19 @@ public class Process extends Thread {
 	}
 
 	/**
-	 * Conecta-se ao multicast peer
+	 * Envia mensagem de anúncio de entrada no grupo
+	 * 
+	 * @throws Exception
+	 */
+	public void anunciarSaida() throws Exception {
+		Message anuncioSaida = new Message(EnumMessageType.SAIDA, this.identificador);
+		this.enviarMensagem(anuncioSaida);
+
+		this.desconectar();
+	}
+
+	/**
+	 * Conecta-se ao grupo
 	 * 
 	 * @throws Exception
 	 */
@@ -98,11 +110,26 @@ public class Process extends Thread {
 			this.group = InetAddress.getByName(NetworkConstants.IP);
 			this.socket = new MulticastSocket(NetworkConstants.PORT);
 			this.socket.joinGroup(group);
+
 			System.out.println("Conectado a " + NetworkConstants.IP + ":" + NetworkConstants.PORT);
+			System.out.println();
 		} catch (Exception e) {
 			throw new Exception("Erro ao conectar-se ao grupo");
 		}
+	}
 
+	/**
+	 * Desconecta-se do grupo
+	 * 
+	 * @throws Exception
+	 */
+	private void desconectar() throws Exception {
+		try {
+			this.socket.leaveGroup(group);
+			this.socket.disconnect();
+		} catch (Exception e) {
+			throw new Exception("Erro ao desconectar-se do grupo");
+		}
 	}
 
 	/**

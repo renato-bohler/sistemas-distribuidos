@@ -1,7 +1,6 @@
 
 /*
  * TODO:
- * - enviar mensagem de saída
  * - atualizar a lista ao receber mensagem de saída
  * - executar somente quando houverem 3 ou mais peers
  * - implementar controle de concorrẽncia (Ricart e Agrawala)
@@ -51,6 +50,7 @@ public class Sockets {
 				break;
 			case 2:
 				System.out.println("Saindo do programa...");
+				processo.anunciarSaida();
 				scanner.close();
 				System.exit(0);
 				break;
