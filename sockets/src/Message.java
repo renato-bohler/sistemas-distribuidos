@@ -5,17 +5,23 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 import enums.EnumMessageType;
 import enums.EnumResourceId;
 import enums.EnumResourceStatus;
+import utils.RSAUtils;
 
 public class Message implements Serializable {
-	// TODO: tempo da mensagem?
 
 	private static final long serialVersionUID = 1L;
 
 	private String remetente;
+
+	private Long timestamp;
+
+	private byte[] encryptedTimestamp;
 
 	private EnumMessageType tipoMensagem;
 
@@ -26,7 +32,7 @@ public class Message implements Serializable {
 	private EnumResourceStatus situacaoRecurso;
 
 	// Deve ser preenchido se tipoMensagem for ENTRADA ou RESPOSTA_ENTRADA
-	private String chavePublica;
+	private byte[] chavePublica;
 
 	// Construtor para REQUISICAO
 	public Message(EnumMessageType tipoMensagem, EnumResourceId recurso, String remetente) throws Exception {
@@ -42,6 +48,7 @@ public class Message implements Serializable {
 			throw new Exception("Mensagem de requisição de recurso deve preencher o recurso");
 		}
 
+		this.timestamp = System.currentTimeMillis();
 		this.tipoMensagem = tipoMensagem;
 		this.recurso = recurso;
 		this.remetente = remetente;
@@ -66,6 +73,7 @@ public class Message implements Serializable {
 			throw new Exception("Mensagem de resposta à requisição de recurso deve preencher a situação do recurso");
 		}
 
+		this.timestamp = System.currentTimeMillis();
 		this.tipoMensagem = tipoMensagem;
 		this.recurso = recurso;
 		this.situacaoRecurso = situacaoRecurso;
@@ -73,7 +81,7 @@ public class Message implements Serializable {
 	}
 
 	// Construtor para ENTRADA, SAIDA e RESPOSTA_ENTRADA
-	public Message(EnumMessageType tipoMensagem, String chavePublica, String remetente) throws Exception {
+	public Message(EnumMessageType tipoMensagem, byte[] chavePublica, String remetente) throws Exception {
 		if (remetente == null || remetente.isEmpty()) {
 			throw new Exception("Toda mensagem deve conter o remetente");
 		}
@@ -92,14 +100,48 @@ public class Message implements Serializable {
 			throw new Exception("Mensagem de anúncio de saída não deve preencher a chave pública");
 		}
 
+		this.timestamp = System.currentTimeMillis();
 		this.tipoMensagem = tipoMensagem;
 		this.chavePublica = chavePublica;
 		this.remetente = remetente;
 	}
 
+	public Message assinar(byte[] chavePrivadaBytes) throws Exception {
+		PrivateKey chavePrivada = RSAUtils.gerarChavePrivadaDeBytes(chavePrivadaBytes);
+
+		this.encryptedTimestamp = RSAUtils.criptografar(timestamp.toString(), chavePrivada);
+
+		return this;
+	}
+
+	public void validar(byte[] chavePublicaBytes) throws Exception {
+		if (chavePublicaBytes == null) {
+			throw new Exception("Impossível validar mensagem sem a chave pública");
+		}
+
+		if (this.encryptedTimestamp == null) {
+			throw new Exception("Impossível validar mensagem não assinada");
+		}
+
+		try {
+			PublicKey chavePublica = RSAUtils.gerarChavePublicaDeBytes(chavePublicaBytes);
+
+			String decryptedTimestamp = new String(RSAUtils.descriptografar(this.encryptedTimestamp, chavePublica));
+
+			if (!decryptedTimestamp.equals(this.timestamp.toString())) {
+				throw new Exception("A mensagem enviada por " + this.remetente + " não foi enviada por ele!");
+			}
+		} catch (Exception e) {
+			throw new Exception("A mensagem enviada por " + this.remetente + " não foi enviada por ele!");
+		}
+	}
+
 	@Override
 	public String toString() {
+		final String PREFIXO = "   >> ";
 		StringBuilder sb = new StringBuilder();
+
+		sb.append(PREFIXO);
 
 		sb.append(this.getRemetente());
 
@@ -119,7 +161,7 @@ public class Message implements Serializable {
 		default:
 			break;
 		}
-
+	
 		return sb.toString();
 	}
 
@@ -165,6 +207,14 @@ public class Message implements Serializable {
 		this.remetente = remetente;
 	}
 
+	public Long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Long timestamp) {
+		this.timestamp = timestamp;
+	}
+
 	public EnumMessageType getTipoMensagem() {
 		return tipoMensagem;
 	}
@@ -189,11 +239,11 @@ public class Message implements Serializable {
 		this.situacaoRecurso = situacaoRecurso;
 	}
 
-	public String getChavePublica() {
+	public byte[] getChavePublica() {
 		return chavePublica;
 	}
 
-	public void setChavePublica(String chavePublica) {
+	public void setChavePublica(byte[] chavePublica) {
 		this.chavePublica = chavePublica;
 	}
 

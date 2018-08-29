@@ -8,20 +8,29 @@ import constants.NetworkConstants;
 import enums.EnumMessageType;
 import enums.EnumResourceId;
 import enums.EnumResourceStatus;
+import utils.RSAUtils;
 
 public class Process extends Thread {
 
 	private String identificador;
-	private String chavePublica;
-	private String chavePrivada;
+	private byte[] chavePublica;
+	private byte[] chavePrivada;
 
 	private Map<EnumResourceId, EnumResourceStatus> situacaoRecursos;
-	private Map<String, String> listaChavesPublicas;
+	private Map<String, byte[]> listaChavesPublicas;
 
 	private MulticastSocket socket;
 	private InetAddress group;
 
-	public Process(String identificador, String chavePublica, String chavePrivada) throws Exception {
+	/**
+	 * Construtor do processo peer to peer
+	 * 
+	 * @param identificador
+	 * @param chavePublica
+	 * @param chavePrivada
+	 * @throws Exception
+	 */
+	public Process(String identificador, byte[] chavePublica, byte[] chavePrivada) throws Exception {
 		if (identificador == null || identificador.isEmpty()) {
 			throw new Exception("Todo processo deve possuir um identificador");
 		}
@@ -39,7 +48,10 @@ public class Process extends Thread {
 		this.chavePrivada = chavePrivada;
 
 		this.situacaoRecursos = new HashMap<EnumResourceId, EnumResourceStatus>();
-		this.listaChavesPublicas = new HashMap<String, String>();
+		this.listaChavesPublicas = new HashMap<String, byte[]>();
+
+		this.situacaoRecursos.put(EnumResourceId.RECURSO_UM, EnumResourceStatus.RELEASED);
+		this.situacaoRecursos.put(EnumResourceId.RECURSO_DOIS, EnumResourceStatus.RELEASED);
 	}
 
 	@Override
@@ -65,12 +77,28 @@ public class Process extends Thread {
 		}
 	}
 
+	/**
+	 * Requisita um recurso
+	 * 
+	 * @param recurso
+	 * @throws Exception
+	 */
 	public void requisitarRecurso(EnumResourceId recurso) throws Exception {
 		// TODO: TTL. Como vou atualizar a lista caso algum processo morra?
 		Message requisicao = new Message(EnumMessageType.REQUISICAO, recurso, this.identificador);
-		this.enviarMensagem(requisicao);
+		// this.enviarMensagem(requisicao);
+
+		requisicao.assinar(RSAUtils.gerarChaves().getPrivate().getEncoded());
+		byte[] mensagemBytes = Message.toBytes(requisicao);
+		DatagramPacket messageOut = new DatagramPacket(mensagemBytes, mensagemBytes.length, this.group, 6789);
+		this.socket.send(messageOut);
 	}
 
+	/**
+	 * Conecta-se ao multicast peer
+	 * 
+	 * @throws Exception
+	 */
 	private void conectar() throws Exception {
 		try {
 			this.group = InetAddress.getByName(NetworkConstants.IP);
@@ -83,9 +111,17 @@ public class Process extends Thread {
 
 	}
 
+	/**
+	 * Envia uma mensagem dada ao peer conectado
+	 * 
+	 * @param mensagem
+	 * @throws Exception
+	 */
 	private void enviarMensagem(Message mensagem) throws Exception {
 		try {
-			byte[] mensagemBytes = Message.toBytes(mensagem);
+			Message mensagemAssinada = mensagem.assinar(this.chavePrivada);
+
+			byte[] mensagemBytes = Message.toBytes(mensagemAssinada);
 			DatagramPacket messageOut = new DatagramPacket(mensagemBytes, mensagemBytes.length, this.group, 6789);
 			this.socket.send(messageOut);
 		} catch (Exception e) {
@@ -93,6 +129,11 @@ public class Process extends Thread {
 		}
 	}
 
+	/**
+	 * Recebe uma mensagem do peer conectado
+	 * 
+	 * @throws Exception
+	 */
 	private void receberMensagem() throws Exception {
 		try {
 			byte[] buffer = new byte[1000];
@@ -102,9 +143,19 @@ public class Process extends Thread {
 			this.socket.receive(messageIn);
 
 			mensagem = Message.fromBytes(buffer);
+
 			System.out.println(mensagem.toString());
 
 			if (!mensagem.getRemetente().equals(this.identificador)) {
+				byte[] chavePublicaRemetenteBytes = this.listaChavesPublicas.get(mensagem.getRemetente());
+
+				if (mensagem.getTipoMensagem().equals(EnumMessageType.ENTRADA)
+						|| mensagem.getTipoMensagem().equals(EnumMessageType.RESPOSTA_ENTRADA)) {
+					chavePublicaRemetenteBytes = mensagem.getChavePublica();
+				}
+
+				mensagem.validar(chavePublicaRemetenteBytes);
+
 				this.tratarMensagem(mensagem);
 			}
 		} catch (Exception e) {
@@ -113,6 +164,13 @@ public class Process extends Thread {
 		}
 	}
 
+	/**
+	 * Faz o tratamento adequado da mensagem recebida, atualizando listas e
+	 * respondendo a mensagem
+	 * 
+	 * @param mensagem
+	 * @throws Exception
+	 */
 	private void tratarMensagem(Message mensagem) throws Exception {
 		switch (mensagem.getTipoMensagem()) {
 		case ENTRADA:
@@ -146,6 +204,11 @@ public class Process extends Thread {
 		// - responde a requisições de recursos
 	}
 
+	/**
+	 * Envia mensagem de anúncio de entrada no grupo
+	 * 
+	 * @throws Exception
+	 */
 	private void anunciarEntrada() throws Exception {
 		Message anuncioEntrada = new Message(EnumMessageType.ENTRADA, this.chavePublica, this.identificador);
 		this.enviarMensagem(anuncioEntrada);
