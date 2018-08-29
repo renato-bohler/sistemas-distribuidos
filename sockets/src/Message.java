@@ -34,6 +34,9 @@ public class Message implements Serializable {
 	// Deve ser preenchido se tipoMensagem for ENTRADA ou RESPOSTA_ENTRADA
 	private byte[] chavePublica;
 
+	// Deve ser preenchido se tipoMensagem for RESPOSTA_ENTRADA
+	private Boolean inicializado;
+
 	/**
 	 * Construtor para o tipo de mensagem REQUISICAO
 	 * 
@@ -96,7 +99,7 @@ public class Message implements Serializable {
 	}
 
 	/**
-	 * Construtor para o tipo de mensagem ENTRADA e RESPOSTA_ENTRADA
+	 * Construtor para o tipo de mensagem ENTRADA
 	 * 
 	 * @param tipoMensagem
 	 * @param chavePublica
@@ -108,20 +111,51 @@ public class Message implements Serializable {
 			throw new Exception("Toda mensagem deve conter o remetente");
 		}
 
-		if (!(tipoMensagem.equals(EnumMessageType.ENTRADA) || tipoMensagem.equals(EnumMessageType.SAIDA)
-				|| tipoMensagem.equals(EnumMessageType.RESPOSTA_ENTRADA))) {
+		if (!tipoMensagem.equals(EnumMessageType.ENTRADA)) {
 			throw new Exception("Construtor incompatível com o tipo de mensagem");
 		}
 
-		if ((tipoMensagem.equals(EnumMessageType.ENTRADA) || tipoMensagem.equals(EnumMessageType.RESPOSTA_ENTRADA))
-				&& chavePublica == null) {
-			throw new Exception("Mensagem de anúncio ou resposta de entrada deve preencher a chave pública");
+		if (chavePublica == null) {
+			throw new Exception("Mensagem de anúncio de entrada deve preencher a chave pública");
 		}
 
 		this.timestamp = System.currentTimeMillis();
 		this.tipoMensagem = tipoMensagem;
 		this.chavePublica = chavePublica;
 		this.remetente = remetente;
+	}
+
+	/**
+	 * Construtor para o tipo de mensagem RESPOSTA_ENTRADA
+	 * 
+	 * @param tipoMensagem
+	 * @param chavePublica
+	 * @param remetente
+	 * @throws Exception
+	 */
+	public Message(EnumMessageType tipoMensagem, byte[] chavePublica, Boolean inicializado, String remetente)
+			throws Exception {
+		if (remetente == null || remetente.isEmpty()) {
+			throw new Exception("Toda mensagem deve conter o remetente");
+		}
+
+		if (!tipoMensagem.equals(EnumMessageType.RESPOSTA_ENTRADA)) {
+			throw new Exception("Construtor incompatível com o tipo de mensagem");
+		}
+
+		if (chavePublica == null) {
+			throw new Exception("Mensagem de resposta à entrada deve preencher a chave pública");
+		}
+
+		if (inicializado == null) {
+			throw new Exception("Mensagem de resposta à entrada deve preencher o inicializado");
+		}
+
+		this.timestamp = System.currentTimeMillis();
+		this.tipoMensagem = tipoMensagem;
+		this.chavePublica = chavePublica;
+		this.remetente = remetente;
+		this.inicializado = inicializado;
 	}
 
 	/**
@@ -287,6 +321,14 @@ public class Message implements Serializable {
 		this.timestamp = timestamp;
 	}
 
+	public byte[] getEncryptedTimestamp() {
+		return encryptedTimestamp;
+	}
+
+	public void setEncryptedTimestamp(byte[] encryptedTimestamp) {
+		this.encryptedTimestamp = encryptedTimestamp;
+	}
+
 	public EnumMessageType getTipoMensagem() {
 		return tipoMensagem;
 	}
@@ -317,6 +359,14 @@ public class Message implements Serializable {
 
 	public void setChavePublica(byte[] chavePublica) {
 		this.chavePublica = chavePublica;
+	}
+
+	public Boolean getInicializado() {
+		return inicializado;
+	}
+
+	public void setInicializado(Boolean inicializado) {
+		this.inicializado = inicializado;
 	}
 
 }

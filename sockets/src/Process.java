@@ -17,6 +17,7 @@ public class Process extends Thread {
 
 	private Map<EnumResourceId, EnumResourceStatus> situacaoRecursos;
 	private Map<String, byte[]> listaChavesPublicas;
+	private Boolean inicializado;
 
 	private MulticastSocket socket;
 	private InetAddress group;
@@ -51,6 +52,7 @@ public class Process extends Thread {
 
 		this.situacaoRecursos.put(EnumResourceId.RECURSO_UM, EnumResourceStatus.RELEASED);
 		this.situacaoRecursos.put(EnumResourceId.RECURSO_DOIS, EnumResourceStatus.RELEASED);
+		this.inicializado = Boolean.FALSE;
 	}
 
 	@Override
@@ -83,7 +85,6 @@ public class Process extends Thread {
 	 * @throws Exception
 	 */
 	public void requisitarRecurso(EnumResourceId recurso) throws Exception {
-		// TODO: TTL. Como vou atualizar a lista caso algum processo morra?
 		Message requisicao = new Message(EnumMessageType.REQUISICAO, recurso, this.identificador);
 		this.enviarMensagem(requisicao);
 	}
@@ -195,16 +196,20 @@ public class Process extends Thread {
 	private void tratarMensagem(Message mensagem) throws Exception {
 		switch (mensagem.getTipoMensagem()) {
 		case ENTRADA:
-			// Responde à mensagens de entrada
-			Message respostaEntrada = new Message(EnumMessageType.RESPOSTA_ENTRADA, this.chavePublica,
-					this.identificador);
-			this.enviarMensagem(respostaEntrada);
 			// Atualiza a lista de chaves públicas
 			this.listaChavesPublicas.put(mensagem.getRemetente(), mensagem.getChavePublica());
+			// Atualiza o estado (inicalizado ou não)
+			this.inicializado |= this.listaChavesPublicas.size() + 1 >= NetworkConstants.MINIMUM_PEERS;
+			// Responde à mensagens de entrada
+			Message respostaEntrada = new Message(EnumMessageType.RESPOSTA_ENTRADA, this.chavePublica,
+					this.inicializado, this.identificador);
+			this.enviarMensagem(respostaEntrada);
 			break;
 		case RESPOSTA_ENTRADA:
 			// Atualiza a lista de chaves públicas
 			this.listaChavesPublicas.put(mensagem.getRemetente(), mensagem.getChavePublica());
+			// Atualiza o estado (inicializado ou não)
+			this.inicializado |= mensagem.getInicializado();
 			break;
 		case SAIDA:
 			// Atualiza a lista de chaves públicas
@@ -221,8 +226,6 @@ public class Process extends Thread {
 		default:
 			break;
 		}
-		// TODO: tratar mensagem
-		// - responde a requisições de recursos
 	}
 
 	/**
@@ -234,4 +237,9 @@ public class Process extends Thread {
 		Message anuncioEntrada = new Message(EnumMessageType.ENTRADA, this.chavePublica, this.identificador);
 		this.enviarMensagem(anuncioEntrada);
 	}
+
+	public Boolean getInicializado() {
+		return inicializado;
+	}
+
 }

@@ -1,13 +1,13 @@
 
 /*
  * TODO:
- * - executar somente quando houverem 3 ou mais peers
  * - implementar controle de concorrẽncia (Ricart e Agrawala)
  */
 import java.security.KeyPair;
 import java.util.Scanner;
 import java.util.UUID;
 
+import constants.NetworkConstants;
 import enums.EnumResourceId;
 import utils.RSAUtils;
 
@@ -32,30 +32,42 @@ public class Sockets {
 			e.printStackTrace();
 		}
 
+		// Imprime as opções no terminal
+		System.out.println("(" + identificador + ") Selecione uma opção abaixo:");
+		System.out.println();
+		System.out.println("|#\t|Ação\t\t\t|");
+		System.out.println("|1\t|Requisitar recurso 1\t|");
+		System.out.println("|2\t|Sair\t\t\t|");
+		System.out.flush();
+		System.out.println();
+
+		// Responde às ações do usuário no terminal
 		Scanner scanner = new Scanner(System.in);
 		while (true) {
-			System.out.println("(" + identificador + ") Selecione uma opção abaixo:");
-			System.out.println();
-			System.out.println("|#\t|Ação\t\t\t|");
-			System.out.println("|1\t|Requisitar recurso 1\t|");
-			System.out.println("|2\t|Sair\t\t\t|");
-			System.out.flush();
-			System.out.println();
 
-			switch (scanner.nextInt()) {
-			case 1:
-				System.out.println("Requisitando recurso 1...");
-				processo.requisitarRecurso(EnumResourceId.RECURSO_UM);
-				break;
-			case 2:
-				System.out.println("Saindo do programa...");
-				processo.anunciarSaida();
-				scanner.close();
-				System.exit(0);
-				break;
-			case 3:
-				System.out.println("Opção inválida!");
-				break;
+			int opcao = scanner.nextInt();
+
+			if (processo.getInicializado() || opcao == 2) {
+				switch (opcao) {
+				case 1:
+					System.out.println("Requisitando recurso 1...");
+					System.out.println();
+					processo.requisitarRecurso(EnumResourceId.RECURSO_UM);
+					break;
+				case 2:
+					System.out.println("Saindo do programa...");
+					System.out.println();
+					processo.anunciarSaida();
+					scanner.close();
+					System.exit(0);
+					break;
+				case 3:
+					System.out.println("Opção inválida!");
+					break;
+				}
+			} else {
+				System.out.println("No mínimo " + NetworkConstants.MINIMUM_PEERS
+						+ " peers devem se conectar para iniciar o processo");
 			}
 
 		}
