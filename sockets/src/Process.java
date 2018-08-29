@@ -8,7 +8,6 @@ import constants.NetworkConstants;
 import enums.EnumMessageType;
 import enums.EnumResourceId;
 import enums.EnumResourceStatus;
-import utils.RSAUtils;
 
 public class Process extends Thread {
 
@@ -86,12 +85,7 @@ public class Process extends Thread {
 	public void requisitarRecurso(EnumResourceId recurso) throws Exception {
 		// TODO: TTL. Como vou atualizar a lista caso algum processo morra?
 		Message requisicao = new Message(EnumMessageType.REQUISICAO, recurso, this.identificador);
-		// this.enviarMensagem(requisicao);
-
-		requisicao.assinar(RSAUtils.gerarChaves().getPrivate().getEncoded());
-		byte[] mensagemBytes = Message.toBytes(requisicao);
-		DatagramPacket messageOut = new DatagramPacket(mensagemBytes, mensagemBytes.length, this.group, 6789);
-		this.socket.send(messageOut);
+		this.enviarMensagem(requisicao);
 	}
 
 	/**
