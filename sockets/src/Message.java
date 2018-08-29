@@ -158,10 +158,13 @@ public class Message implements Serializable {
 		case REQUISICAO:
 			sb.append(" está requisitando o recurso " + this.getRecurso().toString());
 			break;
+		case RESPOSTA_REQUISICAO:
+			sb.append(" informa que o recurso " + this.getRecurso().toString() + " está no estado "
+					+ this.getSituacaoRecurso().toString());
 		default:
 			break;
 		}
-	
+
 		return sb.toString();
 	}
 
