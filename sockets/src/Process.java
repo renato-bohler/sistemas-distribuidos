@@ -1,8 +1,13 @@
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import constants.NetworkConstants;
 import enums.EnumMessageType;
@@ -21,6 +26,9 @@ public class Process extends Thread {
 
 	private MulticastSocket socket;
 	private InetAddress group;
+
+	private List<Message> bufferMensagens;
+	private Boolean requisitandoRecursos;
 
 	/**
 	 * Construtor do processo peer to peer
@@ -53,6 +61,9 @@ public class Process extends Thread {
 		this.situacaoRecursos.put(EnumResourceId.RECURSO_UM, EnumResourceStatus.RELEASED);
 		this.situacaoRecursos.put(EnumResourceId.RECURSO_DOIS, EnumResourceStatus.RELEASED);
 		this.inicializado = Boolean.FALSE;
+
+		this.bufferMensagens = new ArrayList<>();
+		this.requisitandoRecursos = Boolean.FALSE;
 	}
 
 	@Override
@@ -65,7 +76,7 @@ public class Process extends Thread {
 			this.anunciarEntrada();
 
 			// Espera por mensagens
-			while (true) {
+			while (Boolean.FALSE.equals(this.requisitandoRecursos)) {
 				this.receberMensagem();
 			}
 		} catch (Exception e) {
@@ -85,8 +96,47 @@ public class Process extends Thread {
 	 * @throws Exception
 	 */
 	public void requisitarRecurso(EnumResourceId recurso) throws Exception {
+		this.requisitandoRecursos = Boolean.TRUE;
+
+		// Atualiza a situação do recurso
+		this.situacaoRecursos.put(recurso, EnumResourceStatus.WANTED);
+
+		// Envia uma mensagem de requisição do recurso
 		Message requisicao = new Message(EnumMessageType.REQUISICAO, recurso, this.identificador);
 		this.enviarMensagem(requisicao);
+
+		// Recebe as mensagens de resposta à requisição, com timeout
+		this.socket.setSoTimeout(NetworkConstants.TIMEOUT_MILLIS);
+
+		List<Message> respostasRequisicoes = new ArrayList<>();
+		while (respostasRequisicoes.size() != this.listaChavesPublicas.size()) {
+			try {
+				respostasRequisicoes.add(this.receberRespostaRequisicao());
+			} catch (SocketTimeoutException timeoutException) {
+				// Pelo menos um peer esperado não respondeu a tempo
+				Set<String> peersQueResponderam = respostasRequisicoes.stream()
+						.map(respostaRequisicao -> respostaRequisicao.getRemetente()).collect(Collectors.toSet());
+				Set<String> peersQueNaoResponderam = this.listaChavesPublicas.keySet();
+				peersQueNaoResponderam.removeAll(peersQueResponderam);
+
+				peersQueNaoResponderam.forEach(peer -> this.listaChavesPublicas.remove(peer));
+			}
+		}
+
+		this.socket.setSoTimeout(0);
+
+		// Neste ponto, todos os peers já responderam ou foram removidos
+		Boolean todosReleased = respostasRequisicoes.stream().allMatch(
+				respostaRequisicao -> respostaRequisicao.getSituacaoRecurso().equals(EnumResourceStatus.RELEASED));
+
+		if (todosReleased) {
+			// Todos peers responderam que o recurso está RELEASED
+			this.situacaoRecursos.put(recurso, EnumResourceStatus.HELD);
+		} else {
+			// TODO
+		}
+
+		this.requisitandoRecursos = Boolean.FALSE;
 	}
 
 	/**
@@ -158,6 +208,18 @@ public class Process extends Thread {
 	 */
 	private void receberMensagem() throws Exception {
 		try {
+			// Se existirem mensagens no buffer, trata elas antes
+			if (!this.bufferMensagens.isEmpty()) {
+				Message mensagemNoBuffer = this.bufferMensagens.get(0);
+				this.bufferMensagens.remove(mensagemNoBuffer);
+
+				System.out.println(mensagemNoBuffer.toString());
+
+				this.tratarMensagem(mensagemNoBuffer);
+
+				return;
+			}
+
 			byte[] buffer = new byte[1000];
 			Message mensagem;
 			DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
@@ -180,6 +242,41 @@ public class Process extends Thread {
 
 				this.tratarMensagem(mensagem);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Erro ao receber mensagem");
+		}
+	}
+
+	/**
+	 * Recebe uma mensagem de resposta de requisição
+	 * 
+	 * @throws Exception
+	 */
+	private Message receberRespostaRequisicao() throws Exception {
+		try {
+			byte[] buffer = new byte[1000];
+			Message mensagem;
+			DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
+
+			this.socket.receive(messageIn);
+
+			mensagem = Message.fromBytes(buffer);
+
+			// Se a mensagem não for uma resposta de requisição, coloca no
+			// buffer e espera novamente
+			if (!mensagem.getTipoMensagem().equals(EnumMessageType.RESPOSTA_REQUISICAO)) {
+				if (mensagem.getRemetente().equals(this.identificador)) {
+					System.out.println(mensagem.toString());
+				} else {
+					this.bufferMensagens.add(mensagem);
+				}
+				return this.receberRespostaRequisicao();
+			}
+
+			System.out.println(mensagem.toString());
+
+			return mensagem;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception("Erro ao receber mensagem");
