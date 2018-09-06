@@ -1,4 +1,3 @@
-
 /*
  * TODO:
  * - implementar controle de concorrẽncia (Ricart e Agrawala)
@@ -7,9 +6,9 @@ import java.security.KeyPair;
 import java.util.Scanner;
 import java.util.UUID;
 
+import utils.RSAUtils;
 import constants.NetworkConstants;
 import enums.EnumResourceId;
-import utils.RSAUtils;
 
 public class Sockets {
 
@@ -33,11 +32,14 @@ public class Sockets {
 		}
 
 		// Imprime as opções no terminal
-		System.out.println("(" + identificador + ") Selecione uma opção abaixo:");
+		System.out.println("(" + identificador
+				+ ") Selecione uma opção abaixo:");
 		System.out.println();
-		System.out.println("|#\t|Ação\t\t\t|");
-		System.out.println("|1\t|Requisitar recurso 1\t|");
-		System.out.println("|2\t|Sair\t\t\t|");
+		System.out.println("| #\t| Ação\t\t\t\t|");
+		System.out.println("| 1\t| Requisitar recurso 1\t\t|");
+		System.out.println("| 2\t| Requisitar recurso 2\t\t|");
+		System.out.println("| 3\t| Listar peers conectados\t|");
+		System.out.println("| 4\t| Sair\t\t\t\t|");
 		System.out.flush();
 		System.out.println();
 
@@ -47,7 +49,7 @@ public class Sockets {
 
 			int opcao = scanner.nextInt();
 
-			if (processo.getInicializado() || opcao == 2) {
+			if (processo.getInicializado() || opcao == 3 || opcao == 4) {
 				switch (opcao) {
 				case 1:
 					System.out.println("Requisitando recurso 1...");
@@ -55,18 +57,27 @@ public class Sockets {
 					processo.requisitarRecurso(EnumResourceId.RECURSO_UM);
 					break;
 				case 2:
+					System.out.println("Requisitando recurso 2...");
+					System.out.println();
+					processo.requisitarRecurso(EnumResourceId.RECURSO_DOIS);
+					break;
+				case 3:
+					processo.imprimirPeersConectados();
+					break;
+				case 4:
 					System.out.println("Saindo do programa...");
 					System.out.println();
 					processo.anunciarSaida();
 					scanner.close();
 					System.exit(0);
 					break;
-				case 3:
+				default:
 					System.out.println("Opção inválida!");
 					break;
 				}
 			} else {
-				System.out.println("No mínimo " + NetworkConstants.MINIMUM_PEERS
+				System.out.println("No mínimo "
+						+ NetworkConstants.MINIMUM_PEERS
 						+ " peers devem se conectar para iniciar o processo");
 			}
 
