@@ -35,8 +35,7 @@ public class Process extends Thread {
 	 * @param chavePrivada
 	 * @throws Exception
 	 */
-	public Process(String identificador, byte[] chavePublica,
-			byte[] chavePrivada) throws Exception {
+	public Process(String identificador, byte[] chavePublica, byte[] chavePrivada) throws Exception {
 		if (identificador == null || identificador.isEmpty()) {
 			throw new Exception("Todo processo deve possuir um identificador");
 		}
@@ -56,10 +55,8 @@ public class Process extends Thread {
 		this.situacaoRecursos = new HashMap<EnumResourceId, EnumResourceStatus>();
 		this.listaChavesPublicas = new HashMap<String, byte[]>();
 
-		this.situacaoRecursos.put(EnumResourceId.RECURSO_UM,
-				EnumResourceStatus.RELEASED);
-		this.situacaoRecursos.put(EnumResourceId.RECURSO_DOIS,
-				EnumResourceStatus.RELEASED);
+		this.situacaoRecursos.put(EnumResourceId.RECURSO_UM, EnumResourceStatus.RELEASED);
+		this.situacaoRecursos.put(EnumResourceId.RECURSO_DOIS, EnumResourceStatus.RELEASED);
 		this.inicializado = Boolean.FALSE;
 	}
 
@@ -93,15 +90,11 @@ public class Process extends Thread {
 	 * @throws Exception
 	 */
 	public void requisitarRecurso(EnumResourceId recurso) throws Exception {
-		// TODO: quando o peer é o único conectado, o recurso está ficando
-		// WANTED e não HELD
-
 		// Atualiza a situação do recurso
 		this.situacaoRecursos.put(recurso, EnumResourceStatus.WANTED);
 
 		// Envia uma mensagem de requisição do recurso
-		Message requisicao = new Message(EnumMessageType.REQUISICAO, recurso,
-				this.identificador);
+		Message requisicao = new Message(EnumMessageType.REQUISICAO, recurso, this.identificador);
 		this.enviarMensagem(requisicao);
 
 		Long timestampInicio = System.currentTimeMillis();
@@ -109,25 +102,20 @@ public class Process extends Thread {
 		Set<Message> respostasRequisicoes = new HashSet<Message>();
 		while (respostasRequisicoes.size() != this.listaChavesPublicas.size()) {
 			try {
-				respostasRequisicoes.add(this
-						.receberRespostaRequisicao(timestampInicio));
+				respostasRequisicoes.add(this.receberRespostaRequisicao(timestampInicio));
 			} catch (SocketTimeoutException timeoutException) {
 				// Pelo menos um peer esperado não respondeu a tempo
-				Set<String> peersQueResponderam = respostasRequisicoes
-						.stream()
-						.map(respostaRequisicao -> respostaRequisicao
-								.getRemetente()).collect(Collectors.toSet());
+				Set<String> peersQueResponderam = respostasRequisicoes.stream()
+						.map(respostaRequisicao -> respostaRequisicao.getRemetente()).collect(Collectors.toSet());
 
 				Map<String, byte[]> peersQuePermanecem = new HashMap<String, byte[]>();
-				peersQueResponderam.stream().forEach(
-						peer -> peersQuePermanecem.put(peer,
-								this.listaChavesPublicas.get(peer)));
+				peersQueResponderam.stream()
+						.forEach(peer -> peersQuePermanecem.put(peer, this.listaChavesPublicas.get(peer)));
 
 				Set<String> peersRemovidos = this.listaChavesPublicas.keySet();
 				peersRemovidos.removeAll(peersQueResponderam);
 
-				System.out.println("(!) Peers removidos: "
-						+ peersRemovidos.toString());
+				System.out.println("(!) Peers removidos: " + peersRemovidos.toString());
 				System.out.println();
 
 				this.listaChavesPublicas = peersQuePermanecem;
@@ -136,10 +124,9 @@ public class Process extends Thread {
 
 		// Neste ponto, todos os peers já responderam ou foram removidos
 		Boolean todosReleased = respostasRequisicoes.stream().allMatch(
-				respostaRequisicao -> respostaRequisicao.getSituacaoRecurso()
-						.equals(EnumResourceStatus.RELEASED));
+				respostaRequisicao -> respostaRequisicao.getSituacaoRecurso().equals(EnumResourceStatus.RELEASED));
 
-		if (todosReleased) {
+		if (todosReleased || respostasRequisicoes.size() == 0) {
 			// Todos peers responderam que o recurso está RELEASED
 			this.situacaoRecursos.put(recurso, EnumResourceStatus.HELD);
 		} else {
@@ -153,8 +140,7 @@ public class Process extends Thread {
 	 * @throws Exception
 	 */
 	public void anunciarSaida() throws Exception {
-		Message anuncioSaida = new Message(EnumMessageType.SAIDA,
-				this.identificador);
+		Message anuncioSaida = new Message(EnumMessageType.SAIDA, this.identificador);
 		this.enviarMensagem(anuncioSaida);
 
 		this.desconectar();
@@ -164,8 +150,7 @@ public class Process extends Thread {
 	 * Imprime uma lista com os peers conectados
 	 */
 	public void imprimirPeersConectados() {
-		System.out.println("Peers conectados: "
-				+ this.listaChavesPublicas.keySet().toString());
+		System.out.println("Peers conectados: " + this.listaChavesPublicas.keySet().toString());
 	}
 
 	/**
@@ -179,14 +164,11 @@ public class Process extends Thread {
 			this.socket = new MulticastSocket(NetworkConstants.PORT);
 			this.socket.joinGroup(group);
 
-			this.socketRespostasRequisicoes = new MulticastSocket(
-					NetworkConstants.PORT);
+			this.socketRespostasRequisicoes = new MulticastSocket(NetworkConstants.PORT);
 			this.socketRespostasRequisicoes.joinGroup(group);
-			this.socketRespostasRequisicoes
-					.setSoTimeout(NetworkConstants.TIMEOUT_MILLIS);
+			this.socketRespostasRequisicoes.setSoTimeout(NetworkConstants.TIMEOUT_MILLIS);
 
-			System.out.println("Conectado a " + NetworkConstants.IP + ":"
-					+ NetworkConstants.PORT);
+			System.out.println("Conectado a " + NetworkConstants.IP + ":" + NetworkConstants.PORT);
 			System.out.println();
 		} catch (Exception e) {
 			throw new Exception("Erro ao conectar-se ao grupo");
@@ -218,8 +200,7 @@ public class Process extends Thread {
 			Message mensagemAssinada = mensagem.assinar(this.chavePrivada);
 
 			byte[] mensagemBytes = Message.toBytes(mensagemAssinada);
-			DatagramPacket messageOut = new DatagramPacket(mensagemBytes,
-					mensagemBytes.length, this.group, 6789);
+			DatagramPacket messageOut = new DatagramPacket(mensagemBytes, mensagemBytes.length, this.group, 6789);
 			this.socket.send(messageOut);
 		} catch (Exception e) {
 			throw new Exception("Erro ao enviar mensagem");
@@ -244,12 +225,10 @@ public class Process extends Thread {
 			System.out.println(mensagem.toString());
 
 			if (!mensagem.getRemetente().equals(this.identificador)) {
-				byte[] chavePublicaRemetenteBytes = this.listaChavesPublicas
-						.get(mensagem.getRemetente());
+				byte[] chavePublicaRemetenteBytes = this.listaChavesPublicas.get(mensagem.getRemetente());
 
 				if (mensagem.getTipoMensagem().equals(EnumMessageType.ENTRADA)
-						|| mensagem.getTipoMensagem().equals(
-								EnumMessageType.RESPOSTA_ENTRADA)) {
+						|| mensagem.getTipoMensagem().equals(EnumMessageType.RESPOSTA_ENTRADA)) {
 					chavePublicaRemetenteBytes = mensagem.getChavePublica();
 				}
 
@@ -264,14 +243,12 @@ public class Process extends Thread {
 	}
 
 	/**
-	 * Recebe uma mensagem de resposta de requisição, chegada após
-	 * timestampInicio
+	 * Recebe uma mensagem de resposta de requisição, chegada após timestampInicio
 	 * 
 	 * @param timestampInicio
 	 * @throws Exception
 	 */
-	private Message receberRespostaRequisicao(Long timestampInicio)
-			throws Exception {
+	private Message receberRespostaRequisicao(Long timestampInicio) throws Exception {
 		try {
 			byte[] buffer = new byte[1000];
 			Message mensagem;
@@ -282,8 +259,7 @@ public class Process extends Thread {
 			mensagem = Message.fromBytes(buffer);
 
 			// Limpa mensagens estão no buffer e não interessam
-			if (!mensagem.getTipoMensagem().equals(
-					EnumMessageType.RESPOSTA_REQUISICAO)
+			if (!mensagem.getTipoMensagem().equals(EnumMessageType.RESPOSTA_REQUISICAO)
 					|| mensagem.getRemetente().equals(this.identificador)
 					|| timestampInicio > mensagem.getTimestamp()) {
 				return this.receberRespostaRequisicao(timestampInicio);
@@ -309,20 +285,17 @@ public class Process extends Thread {
 		switch (mensagem.getTipoMensagem()) {
 		case ENTRADA:
 			// Atualiza a lista de chaves públicas
-			this.listaChavesPublicas.put(mensagem.getRemetente(),
-					mensagem.getChavePublica());
+			this.listaChavesPublicas.put(mensagem.getRemetente(), mensagem.getChavePublica());
 			// Atualiza o estado (inicalizado ou não)
 			this.inicializado |= this.listaChavesPublicas.size() + 1 >= NetworkConstants.MINIMUM_PEERS;
 			// Responde à mensagens de entrada
-			Message respostaEntrada = new Message(
-					EnumMessageType.RESPOSTA_ENTRADA, this.chavePublica,
+			Message respostaEntrada = new Message(EnumMessageType.RESPOSTA_ENTRADA, this.chavePublica,
 					this.inicializado, this.identificador);
 			this.enviarMensagem(respostaEntrada);
 			break;
 		case RESPOSTA_ENTRADA:
 			// Atualiza a lista de chaves públicas
-			this.listaChavesPublicas.put(mensagem.getRemetente(),
-					mensagem.getChavePublica());
+			this.listaChavesPublicas.put(mensagem.getRemetente(), mensagem.getChavePublica());
 			// Atualiza o estado (inicializado ou não)
 			this.inicializado |= mensagem.getInicializado();
 			break;
@@ -333,10 +306,8 @@ public class Process extends Thread {
 		case REQUISICAO:
 			// Responde à requisição de recursos
 			EnumResourceId recursoRequisitado = mensagem.getRecurso();
-			EnumResourceStatus situacaoRecursoRequisiado = situacaoRecursos
-					.get(recursoRequisitado);
-			Message respostaRequisicao = new Message(
-					EnumMessageType.RESPOSTA_REQUISICAO, recursoRequisitado,
+			EnumResourceStatus situacaoRecursoRequisiado = situacaoRecursos.get(recursoRequisitado);
+			Message respostaRequisicao = new Message(EnumMessageType.RESPOSTA_REQUISICAO, recursoRequisitado,
 					situacaoRecursoRequisiado, this.identificador);
 			this.enviarMensagem(respostaRequisicao);
 			break;
@@ -351,8 +322,7 @@ public class Process extends Thread {
 	 * @throws Exception
 	 */
 	private void anunciarEntrada() throws Exception {
-		Message anuncioEntrada = new Message(EnumMessageType.ENTRADA,
-				this.chavePublica, this.identificador);
+		Message anuncioEntrada = new Message(EnumMessageType.ENTRADA, this.chavePublica, this.identificador);
 		this.enviarMensagem(anuncioEntrada);
 	}
 

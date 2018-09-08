@@ -1,3 +1,4 @@
+
 /*
  * TODO:
  * - implementar controle de concorrẽncia (Ricart e Agrawala)
@@ -6,9 +7,9 @@ import java.security.KeyPair;
 import java.util.Scanner;
 import java.util.UUID;
 
-import utils.RSAUtils;
 import constants.NetworkConstants;
 import enums.EnumResourceId;
+import utils.RSAUtils;
 
 public class Sockets {
 
@@ -32,8 +33,7 @@ public class Sockets {
 		}
 
 		// Imprime as opções no terminal
-		System.out.println("(" + identificador
-				+ ") Selecione uma opção abaixo:");
+		System.out.println("(" + identificador + ") Selecione uma opção abaixo:");
 		System.out.println();
 		System.out.println("| #\t| Ação\t\t\t\t|");
 		System.out.println("| 1\t| Requisitar recurso 1\t\t|");
@@ -76,8 +76,7 @@ public class Sockets {
 					break;
 				}
 			} else {
-				System.out.println("No mínimo "
-						+ NetworkConstants.MINIMUM_PEERS
+				System.out.println("No mínimo " + NetworkConstants.MINIMUM_PEERS
 						+ " peers devem se conectar para iniciar o processo");
 			}
 
