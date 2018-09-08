@@ -20,6 +20,7 @@ public class Process extends Thread {
 	private byte[] chavePrivada;
 
 	private Map<EnumResourceId, EnumResourceStatus> situacaoRecursos;
+	private Map<EnumResourceId, Set<String>> listasEsperasRecursos;
 	private Map<String, byte[]> listaChavesPublicas;
 	private Boolean inicializado;
 
@@ -53,10 +54,13 @@ public class Process extends Thread {
 		this.chavePrivada = chavePrivada;
 
 		this.situacaoRecursos = new HashMap<EnumResourceId, EnumResourceStatus>();
+		this.listasEsperasRecursos = new HashMap<EnumResourceId, Set<String>>();
 		this.listaChavesPublicas = new HashMap<String, byte[]>();
 
 		this.situacaoRecursos.put(EnumResourceId.RECURSO_UM, EnumResourceStatus.RELEASED);
 		this.situacaoRecursos.put(EnumResourceId.RECURSO_DOIS, EnumResourceStatus.RELEASED);
+		this.listasEsperasRecursos.put(EnumResourceId.RECURSO_UM, new HashSet<String>());
+		this.listasEsperasRecursos.put(EnumResourceId.RECURSO_DOIS, new HashSet<String>());
 		this.inicializado = Boolean.FALSE;
 	}
 
@@ -90,6 +94,11 @@ public class Process extends Thread {
 	 * @throws Exception
 	 */
 	public void requisitarRecurso(EnumResourceId recurso) throws Exception {
+		if (!this.situacaoRecursos.get(recurso).equals(EnumResourceStatus.RELEASED)) {
+			System.out.println(recurso.toString() + " já foi requisitado");
+			return;
+		}
+
 		// Atualiza a situação do recurso
 		this.situacaoRecursos.put(recurso, EnumResourceStatus.WANTED);
 
@@ -123,15 +132,38 @@ public class Process extends Thread {
 		}
 
 		// Neste ponto, todos os peers já responderam ou foram removidos
-		Boolean todosReleased = respostasRequisicoes.stream().allMatch(
-				respostaRequisicao -> respostaRequisicao.getSituacaoRecurso().equals(EnumResourceStatus.RELEASED));
+		Set<String> novaListaEspera = respostasRequisicoes.stream().filter(
+				respostaRequisicao -> !respostaRequisicao.getSituacaoRecurso().equals(EnumResourceStatus.RELEASED))
+				.map(respostaRequisicao -> respostaRequisicao.getRemetente()).collect(Collectors.toSet());
 
-		if (todosReleased || respostasRequisicoes.size() == 0) {
+		if (novaListaEspera.size() == 0) {
 			// Todos peers responderam que o recurso está RELEASED
 			this.situacaoRecursos.put(recurso, EnumResourceStatus.HELD);
+			System.out.println("Acesso liberado ao " + recurso.toString());
 		} else {
-			// TODO: demais casos do algoritmo
+			// Atualiza a lista de espera pelo recurso
+			this.listasEsperasRecursos.put(recurso, novaListaEspera);
+			System.out.println("Esperando pela liberação dos peers " + novaListaEspera.toString());
 		}
+	}
+
+	/**
+	 * Libera um recurso
+	 * 
+	 * @param recurso
+	 * @throws Exception
+	 */
+	public void liberarRecurso(EnumResourceId recurso) throws Exception {
+		EnumResourceStatus situacaoRecurso = this.situacaoRecursos.get(recurso);
+		if (!situacaoRecurso.equals(EnumResourceStatus.HELD)) {
+			System.out.println(recurso.toString() + " está " + situacaoRecurso);
+			return;
+		}
+
+		this.situacaoRecursos.put(recurso, EnumResourceStatus.RELEASED);
+
+		Message liberacao = new Message(EnumMessageType.LIBERACAO_RECURSO, recurso, this.identificador);
+		this.enviarMensagem(liberacao);
 	}
 
 	/**
@@ -310,6 +342,23 @@ public class Process extends Thread {
 			Message respostaRequisicao = new Message(EnumMessageType.RESPOSTA_REQUISICAO, recursoRequisitado,
 					situacaoRecursoRequisiado, this.identificador);
 			this.enviarMensagem(respostaRequisicao);
+			break;
+		case LIBERACAO_RECURSO:
+			// Atualiza a lista de espera do recurso, caso esteja interessado
+			EnumResourceId recursoLiberado = mensagem.getRecurso();
+			EnumResourceStatus situacaoRecursoLiberado = situacaoRecursos.get(recursoLiberado);
+
+			if (situacaoRecursoLiberado.equals(EnumResourceStatus.WANTED)) {
+				Set<String> listaEsperaRecursoLiberado = this.listasEsperasRecursos.get(recursoLiberado);
+				listaEsperaRecursoLiberado.remove(mensagem.getRemetente());
+
+				if (listaEsperaRecursoLiberado.size() == 0) {
+					this.situacaoRecursos.put(recursoLiberado, EnumResourceStatus.HELD);
+					System.out.println("Acesso liberado ao " + recursoLiberado.toString());
+				} else {
+					System.out.println("Esperando pela liberação dos peers " + listaEsperaRecursoLiberado.toString());
+				}
+			}
 			break;
 		default:
 			break;

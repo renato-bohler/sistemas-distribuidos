@@ -1,8 +1,3 @@
-
-/*
- * TODO:
- * - implementar controle de concorrẽncia (Ricart e Agrawala)
- */
 import java.security.KeyPair;
 import java.util.Scanner;
 import java.util.UUID;
@@ -38,8 +33,10 @@ public class Sockets {
 		System.out.println("| #\t| Ação\t\t\t\t|");
 		System.out.println("| 1\t| Requisitar recurso 1\t\t|");
 		System.out.println("| 2\t| Requisitar recurso 2\t\t|");
-		System.out.println("| 3\t| Listar peers conectados\t|");
-		System.out.println("| 4\t| Sair\t\t\t\t|");
+		System.out.println("| 3\t| Liberar o recurso 1\t\t|");
+		System.out.println("| 4\t| Liberar o recurso 2\t\t|");
+		System.out.println("| 5\t| Listar peers conectados\t|");
+		System.out.println("| 6\t| Sair\t\t\t\t|");
 		System.out.flush();
 		System.out.println();
 
@@ -49,7 +46,7 @@ public class Sockets {
 
 			int opcao = scanner.nextInt();
 
-			if (processo.getInicializado() || opcao == 3 || opcao == 4) {
+			if (processo.getInicializado() || opcao == 5 || opcao == 6) {
 				switch (opcao) {
 				case 1:
 					System.out.println("Requisitando recurso 1...");
@@ -62,9 +59,19 @@ public class Sockets {
 					processo.requisitarRecurso(EnumResourceId.RECURSO_DOIS);
 					break;
 				case 3:
-					processo.imprimirPeersConectados();
+					System.out.println("Liberando recurso 1...");
+					System.out.println();
+					processo.liberarRecurso(EnumResourceId.RECURSO_UM);
 					break;
 				case 4:
+					System.out.println("Liberando recurso 2...");
+					System.out.println();
+					processo.liberarRecurso(EnumResourceId.RECURSO_DOIS);
+					break;
+				case 5:
+					processo.imprimirPeersConectados();
+					break;
+				case 6:
 					System.out.println("Saindo do programa...");
 					System.out.println();
 					processo.anunciarSaida();

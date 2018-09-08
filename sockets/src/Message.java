@@ -25,7 +25,8 @@ public class Message implements Serializable {
 
 	private EnumMessageType tipoMensagem;
 
-	// Deve ser preenchido se tipoMensagem for REQUISICAO ou RESPOSTA_REQUISICAO
+	// Deve ser preenchido se tipoMensagem for REQUISICAO, RESPOSTA_REQUISICAO ou
+	// LIBERACAO_RECURSO
 	private EnumResourceId recurso;
 
 	// Deve ser preenchido se tipoMensagem for RESPOSTA_REQUISICAO
@@ -38,7 +39,7 @@ public class Message implements Serializable {
 	private Boolean inicializado;
 
 	/**
-	 * Construtor para o tipo de mensagem REQUISICAO
+	 * Construtor para o tipo de mensagem REQUISICAO ou LIBERACAO_RECURSO
 	 * 
 	 * @param tipoMensagem
 	 * @param recurso
@@ -50,12 +51,13 @@ public class Message implements Serializable {
 			throw new Exception("Toda mensagem deve conter o remetente");
 		}
 
-		if (!tipoMensagem.equals(EnumMessageType.REQUISICAO)) {
+		if (!tipoMensagem.equals(EnumMessageType.REQUISICAO)
+				&& !tipoMensagem.equals(EnumMessageType.LIBERACAO_RECURSO)) {
 			throw new Exception("Construtor incompatível com o tipo de mensagem");
 		}
 
 		if (recurso == null) {
-			throw new Exception("Mensagem de requisição de recurso deve preencher o recurso");
+			throw new Exception("Mensagem de requisição ou liberação de recurso deve preencher o recurso");
 		}
 
 		this.timestamp = System.currentTimeMillis();
@@ -250,6 +252,10 @@ public class Message implements Serializable {
 		case RESPOSTA_REQUISICAO:
 			sb.append(" informa que o recurso " + this.getRecurso().toString() + " está no estado "
 					+ this.getSituacaoRecurso().toString());
+			break;
+		case LIBERACAO_RECURSO:
+			sb.append(" liberou o recurso " + this.getRecurso().toString());
+			break;
 		default:
 			break;
 		}
