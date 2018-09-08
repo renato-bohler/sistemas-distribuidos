@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import constants.DisplayConstants;
 import constants.NetworkConstants;
 import enums.EnumMessageType;
 import enums.EnumResourceId;
@@ -78,7 +79,9 @@ public class Process extends Thread {
 				this.receberMensagem();
 			}
 		} catch (Exception e) {
-			System.out.println("Conexão encerrada");
+			System.out.println();
+			System.out.println(DisplayConstants.COMMAND_PREFIX + "Conexão encerrada");
+			System.out.println();
 			e.printStackTrace();
 		} finally {
 			if (this.socket != null) {
@@ -95,7 +98,9 @@ public class Process extends Thread {
 	 */
 	public void requisitarRecurso(EnumResourceId recurso) throws Exception {
 		if (!this.situacaoRecursos.get(recurso).equals(EnumResourceStatus.RELEASED)) {
-			System.out.println(recurso.toString() + " já foi requisitado");
+			System.out.println();
+			System.out.println(DisplayConstants.COMMAND_PREFIX + recurso.toString() + " já foi requisitado");
+			System.out.println();
 			return;
 		}
 
@@ -124,7 +129,8 @@ public class Process extends Thread {
 				Set<String> peersRemovidos = this.listaChavesPublicas.keySet();
 				peersRemovidos.removeAll(peersQueResponderam);
 
-				System.out.println("(!) Peers removidos: " + peersRemovidos.toString());
+				System.out.println();
+				System.out.println(DisplayConstants.COMMAND_PREFIX + "Peers removidos: " + peersRemovidos.toString());
 				System.out.println();
 
 				this.listaChavesPublicas = peersQuePermanecem;
@@ -139,11 +145,16 @@ public class Process extends Thread {
 		if (novaListaEspera.size() == 0) {
 			// Todos peers responderam que o recurso está RELEASED
 			this.situacaoRecursos.put(recurso, EnumResourceStatus.HELD);
-			System.out.println("Acesso liberado ao " + recurso.toString());
+			System.out.println();
+			System.out.println(DisplayConstants.COMMAND_PREFIX + "Acesso liberado ao " + recurso.toString());
+			System.out.println();
 		} else {
 			// Atualiza a lista de espera pelo recurso
 			this.listasEsperasRecursos.put(recurso, novaListaEspera);
-			System.out.println("Esperando pela liberação dos peers " + novaListaEspera.toString());
+			System.out.println();
+			System.out.println(DisplayConstants.COMMAND_PREFIX + "Esperando pela liberação dos peers "
+					+ novaListaEspera.toString());
+			System.out.println();
 		}
 	}
 
@@ -156,7 +167,9 @@ public class Process extends Thread {
 	public void liberarRecurso(EnumResourceId recurso) throws Exception {
 		EnumResourceStatus situacaoRecurso = this.situacaoRecursos.get(recurso);
 		if (!situacaoRecurso.equals(EnumResourceStatus.HELD)) {
-			System.out.println(recurso.toString() + " está " + situacaoRecurso);
+			System.out.println();
+			System.out.println(DisplayConstants.COMMAND_PREFIX + recurso.toString() + " está " + situacaoRecurso);
+			System.out.println();
 			return;
 		}
 
@@ -182,7 +195,10 @@ public class Process extends Thread {
 	 * Imprime uma lista com os peers conectados
 	 */
 	public void imprimirPeersConectados() {
-		System.out.println("Peers conectados: " + this.listaChavesPublicas.keySet().toString());
+		System.out.println();
+		System.out.println(
+				DisplayConstants.COMMAND_PREFIX + "Peers conectados: " + this.listaChavesPublicas.keySet().toString());
+		System.out.println();
 	}
 
 	/**
@@ -200,7 +216,9 @@ public class Process extends Thread {
 			this.socketRespostasRequisicoes.joinGroup(group);
 			this.socketRespostasRequisicoes.setSoTimeout(NetworkConstants.TIMEOUT_MILLIS);
 
-			System.out.println("Conectado a " + NetworkConstants.IP + ":" + NetworkConstants.PORT);
+			System.out.println();
+			System.out.println(DisplayConstants.COMMAND_PREFIX + "Conectado a " + NetworkConstants.IP + ":"
+					+ NetworkConstants.PORT);
 			System.out.println();
 		} catch (Exception e) {
 			throw new Exception("Erro ao conectar-se ao grupo");
@@ -354,9 +372,15 @@ public class Process extends Thread {
 
 				if (listaEsperaRecursoLiberado.size() == 0) {
 					this.situacaoRecursos.put(recursoLiberado, EnumResourceStatus.HELD);
-					System.out.println("Acesso liberado ao " + recursoLiberado.toString());
+					System.out.println();
+					System.out.println(
+							DisplayConstants.COMMAND_PREFIX + "Acesso liberado ao " + recursoLiberado.toString());
+					System.out.println();
 				} else {
-					System.out.println("Esperando pela liberação dos peers " + listaEsperaRecursoLiberado.toString());
+					System.out.println();
+					System.out.println(DisplayConstants.COMMAND_PREFIX + "Esperando pela liberação dos peers "
+							+ listaEsperaRecursoLiberado.toString());
+					System.out.println();
 				}
 			}
 			break;

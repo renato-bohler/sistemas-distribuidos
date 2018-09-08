@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+import constants.DisplayConstants;
 import enums.EnumMessageType;
 import enums.EnumResourceId;
 import enums.EnumResourceStatus;
@@ -229,10 +230,9 @@ public class Message implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		final String PREFIXO = "   >> ";
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(PREFIXO);
+		sb.append(DisplayConstants.MESSAGE_PREFIX);
 
 		sb.append(this.getRemetente());
 

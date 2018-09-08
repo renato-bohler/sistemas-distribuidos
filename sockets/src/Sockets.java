@@ -2,6 +2,7 @@ import java.security.KeyPair;
 import java.util.Scanner;
 import java.util.UUID;
 
+import constants.DisplayConstants;
 import constants.NetworkConstants;
 import enums.EnumResourceId;
 import utils.RSAUtils;
@@ -37,7 +38,6 @@ public class Sockets {
 		System.out.println("| 4\t| Liberar o recurso 2\t\t|");
 		System.out.println("| 5\t| Listar peers conectados\t|");
 		System.out.println("| 6\t| Sair\t\t\t\t|");
-		System.out.flush();
 		System.out.println();
 
 		// Responde às ações do usuário no terminal
@@ -49,22 +49,26 @@ public class Sockets {
 			if (processo.getInicializado() || opcao == 5 || opcao == 6) {
 				switch (opcao) {
 				case 1:
-					System.out.println("Requisitando recurso 1...");
+					System.out.println();
+					System.out.println(DisplayConstants.COMMAND_PREFIX + "Requisitando recurso 1...");
 					System.out.println();
 					processo.requisitarRecurso(EnumResourceId.RECURSO_UM);
 					break;
 				case 2:
-					System.out.println("Requisitando recurso 2...");
+					System.out.println();
+					System.out.println(DisplayConstants.COMMAND_PREFIX + "Requisitando recurso 2...");
 					System.out.println();
 					processo.requisitarRecurso(EnumResourceId.RECURSO_DOIS);
 					break;
 				case 3:
-					System.out.println("Liberando recurso 1...");
+					System.out.println();
+					System.out.println(DisplayConstants.COMMAND_PREFIX + "Liberando recurso 1...");
 					System.out.println();
 					processo.liberarRecurso(EnumResourceId.RECURSO_UM);
 					break;
 				case 4:
-					System.out.println("Liberando recurso 2...");
+					System.out.println();
+					System.out.println(DisplayConstants.COMMAND_PREFIX + "Liberando recurso 2...");
 					System.out.println();
 					processo.liberarRecurso(EnumResourceId.RECURSO_DOIS);
 					break;
@@ -72,14 +76,15 @@ public class Sockets {
 					processo.imprimirPeersConectados();
 					break;
 				case 6:
-					System.out.println("Saindo do programa...");
+					System.out.println();
+					System.out.println(DisplayConstants.COMMAND_PREFIX + "Saindo do programa...");
 					System.out.println();
 					processo.anunciarSaida();
 					scanner.close();
 					System.exit(0);
 					break;
 				default:
-					System.out.println("Opção inválida!");
+					System.out.println(DisplayConstants.COMMAND_PREFIX + "Opção inválida!");
 					break;
 				}
 			} else {
