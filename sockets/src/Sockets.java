@@ -5,6 +5,7 @@ import java.util.UUID;
 import constants.DisplayConstants;
 import constants.NetworkConstants;
 import enums.EnumResourceId;
+import enums.EnumResourceStatus;
 import utils.RSAUtils;
 
 public class Sockets {
@@ -64,13 +65,13 @@ public class Sockets {
 					System.out.println();
 					System.out.println(DisplayConstants.COMMAND_PREFIX + "Liberando recurso 1...");
 					System.out.println();
-					processo.liberarRecurso(EnumResourceId.RECURSO_UM);
+					processo.liberarRecurso(EnumResourceId.RECURSO_UM, Boolean.TRUE);
 					break;
 				case 4:
 					System.out.println();
 					System.out.println(DisplayConstants.COMMAND_PREFIX + "Liberando recurso 2...");
 					System.out.println();
-					processo.liberarRecurso(EnumResourceId.RECURSO_DOIS);
+					processo.liberarRecurso(EnumResourceId.RECURSO_DOIS, Boolean.TRUE);
 					break;
 				case 5:
 					processo.imprimirPeersConectados();
@@ -79,6 +80,8 @@ public class Sockets {
 					System.out.println();
 					System.out.println(DisplayConstants.COMMAND_PREFIX + "Saindo do programa...");
 					System.out.println();
+					processo.liberarRecurso(EnumResourceId.RECURSO_UM, Boolean.FALSE);
+					processo.liberarRecurso(EnumResourceId.RECURSO_DOIS, Boolean.FALSE);
 					processo.anunciarSaida();
 					scanner.close();
 					System.exit(0);

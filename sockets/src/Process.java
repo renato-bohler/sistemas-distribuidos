@@ -164,12 +164,14 @@ public class Process extends Thread {
 	 * @param recurso
 	 * @throws Exception
 	 */
-	public void liberarRecurso(EnumResourceId recurso) throws Exception {
+	public void liberarRecurso(EnumResourceId recurso, Boolean notificarErro) throws Exception {
 		EnumResourceStatus situacaoRecurso = this.situacaoRecursos.get(recurso);
 		if (!situacaoRecurso.equals(EnumResourceStatus.HELD)) {
-			System.out.println();
-			System.out.println(DisplayConstants.COMMAND_PREFIX + recurso.toString() + " está " + situacaoRecurso);
-			System.out.println();
+			if (Boolean.TRUE.equals(notificarErro)) {
+				System.out.println();
+				System.out.println(DisplayConstants.COMMAND_PREFIX + recurso.toString() + " está " + situacaoRecurso);
+				System.out.println();
+			}
 			return;
 		}
 
@@ -293,7 +295,8 @@ public class Process extends Thread {
 	}
 
 	/**
-	 * Recebe uma mensagem de resposta de requisição, chegada após timestampInicio
+	 * Recebe uma mensagem de resposta de requisição, chegada após
+	 * timestampInicio
 	 * 
 	 * @param timestampInicio
 	 * @throws Exception
