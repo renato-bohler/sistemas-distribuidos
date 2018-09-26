@@ -8,7 +8,7 @@ import constants.Network;
 import implementation.ServerImplementation;
 import rmi.Server;
 
-public class Main {
+public class ServerMain {
 	public static void main(String[] args) throws RemoteException {
 		Registry nameServer = LocateRegistry.createRegistry(Network.PORT);
 
