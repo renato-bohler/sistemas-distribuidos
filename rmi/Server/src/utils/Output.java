@@ -24,11 +24,14 @@ public class Output {
 
 		for (Airfare passagem : passagens) {
 			imprimir(DIVISOR);
-			imprimir("Código:\t" + passagem.getIda().getId().toString() + "-" + passagem.getVolta().getId().toString());
-			imprimir("Origem:\t" + passagem.getIda().getOrigem());
+			imprimir("Código:\t\t" + passagem.getIda().getId().toString()
+					+ (passagem.getVolta() != null && passagem.getVolta().getId() != null
+							? "-" + passagem.getVolta().getId().toString() : ""));
+			imprimir("Origem:\t\t" + passagem.getIda().getOrigem());
 			imprimir("Destino:\t" + passagem.getIda().getDestino());
 			imprimir("Data ida:\t" + passagem.getIda().getData());
-			imprimir("Data volta:\t" + passagem.getVolta().getData() != null ? passagem.getVolta().getData() : "-");
+			imprimir("Data volta:\t" + (passagem.getVolta() != null && passagem.getVolta().getData() != null
+					? passagem.getVolta().getData() : "-"));
 			imprimir("N° passageiros:\t" + passagem.getNumeroPessoas());
 			imprimir("Valor total:\tR$ " + passagem.getValorTotal() + ",00");
 		}
