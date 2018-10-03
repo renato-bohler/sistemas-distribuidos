@@ -10,6 +10,8 @@ import constants.Network;
 import enums.EnumDesiredEvent;
 import implementation.ClientImplementation;
 import resources.Accommodation;
+import resources.Airfare;
+import resources.Flight;
 import resources.Interest;
 import resources.Package;
 import rmi.Client;
@@ -144,18 +146,43 @@ public class ClientMain {
 					break;
 				case 4:
 					// Comprar passagens
-					// TODO: implementar
-					/*
-					 * Output.
-					 * imprimirMesmaLinha("Informe o código da passagem: ");
-					 * codigo = scanner.nextLong();
-					 * 
-					 * Airfare passagem = new Airfare(); passagem.setId(codigo);
-					 * 
-					 * if (servidor.comprarPassagem(passagem)) {
-					 * Output.imprimir("Passagem comprada com sucesso"); } else
-					 * { Output.imprimir("Erro ao comprar passagem"); }
-					 */
+					Output.imprimirMesmaLinha("Informe o código da passagem: ");
+					String codigoPassagem = scanner.nextLine();
+
+					Airfare passagem = new Airfare();
+					if (codigoPassagem.contains("-")) {
+						Long codigoIda = Long.valueOf(codigoPassagem.split("-")[0]);
+						Long codigoVolta = Long.valueOf(codigoPassagem.split("-")[1]);
+
+						Flight vooIda = new Flight();
+						vooIda.setId(codigoIda);
+
+						Flight vooVolta = new Flight();
+						vooVolta.setId(codigoVolta);
+
+						passagem.setIda(vooIda);
+						passagem.setVolta(vooVolta);
+					} else {
+						Long codigoIda = Long.valueOf(codigoPassagem);
+
+						Flight vooIda = new Flight();
+						vooIda.setId(codigoIda);
+
+						passagem.setIda(vooIda);
+					}
+
+					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
+					numeroPessoas = scanner.nextLong();
+					scanner.nextLine();
+
+					passagem.setNumeroPessoas(numeroPessoas);
+
+					if (servidor.comprarPassagem(passagem)) {
+						Output.imprimir("Passagem comprada com sucesso");
+					} else {
+						Output.imprimir("Erro ao comprar passagem");
+					}
+
 					break;
 				case 5:
 					// Comprar hospedagens

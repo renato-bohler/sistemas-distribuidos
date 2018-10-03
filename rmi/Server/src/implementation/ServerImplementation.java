@@ -69,7 +69,38 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 	@Override
 	public Boolean comprarPassagem(Airfare passagem) throws RemoteException {
-		// TODO: implementar
+		Flight vooIda = this.voos.stream().filter(voo -> voo.getId().equals(passagem.getIda().getId())).findFirst()
+				.get();
+
+		if (vooIda == null) {
+			// Vôo de ida não encontrado
+			return Boolean.FALSE;
+		}
+
+		if (vooIda.getVagas().compareTo(passagem.getNumeroPessoas()) < 0) {
+			// Vôo de ida não possui vagas suficientes
+			return Boolean.FALSE;
+		}
+
+		Flight vooVolta = null;
+		if (passagem.getVolta() != null) {
+			vooVolta = this.voos.stream().filter(voo -> voo.getId().equals(passagem.getVolta().getId())).findFirst()
+					.get();
+
+			if (vooVolta == null) {
+				// Vôo de volta não encontrado
+				return Boolean.FALSE;
+			}
+
+			if (vooIda.getVagas().compareTo(passagem.getNumeroPessoas()) < 0) {
+				// Vôo de volta não possui vagas suficientes
+				return Boolean.FALSE;
+			}
+		}
+
+		vooIda.setVagas(vooIda.getVagas() - passagem.getNumeroPessoas());
+		vooVolta.setVagas(vooVolta.getVagas() - passagem.getNumeroPessoas());
+
 		return Boolean.TRUE;
 	}
 
