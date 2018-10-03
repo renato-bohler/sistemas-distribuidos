@@ -1,9 +1,13 @@
 package resources;
 
+import java.io.Serializable;
+
 import enums.EnumDesiredEvent;
 import rmi.Client;
 
-public class Interest {
+public class Interest implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private Long id;
 	private Client cliente;
 	private EnumDesiredEvent eventoDesejado;

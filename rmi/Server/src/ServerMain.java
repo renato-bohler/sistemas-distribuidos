@@ -7,7 +7,9 @@ import java.util.Scanner;
 import constants.Names;
 import constants.Network;
 import implementation.ServerImplementation;
+import resources.Flight;
 import rmi.Server;
+import utils.Output;
 
 public class ServerMain {
 	public static void main(String[] args) throws RemoteException {
@@ -16,9 +18,9 @@ public class ServerMain {
 		try {
 			servidor = new ServerImplementation();
 			nameServer.bind(Names.SERVIDOR, servidor);
-			System.out.println("Servidor inicializado");
+			Output.imprimir("Servidor inicializado");
 		} catch (Exception e) {
-			System.out.println("Erro ao inicializar servidor");
+			Output.imprimir("Erro ao inicializar servidor");
 			e.printStackTrace();
 		}
 
@@ -27,44 +29,69 @@ public class ServerMain {
 		try {
 			while (true) {
 				// Imprime as opções no terminal
-				System.out.println("Selecione uma opção abaixo:");
-				System.out.println();
-				System.out.println("| #\t| Ação\t\t\t\t|");
-				System.out.println("| 1\t| Consultar passagens\t\t|");
-				System.out.println("| 2\t| Cadastrar passagem\t\t|");
-				System.out.println("| 3\t| Editar passagem\t\t|");
-				System.out.println("| 4\t| Remover passagem\t\t|");
-				System.out.println("| 5\t| Consultar hospedagens\t|");
-				System.out.println("| 6\t| Cadastrar hospedagem\t\t\t\t|");
-				System.out.println("| 7\t| Editar hospedagem\t\t\t\t|");
-				System.out.println("| 8\t| Remover hospedagem\t\t\t\t|");
-				System.out.println();
+				Output.imprimir();
+				Output.imprimir("| #\t| Ação\t\t\t\t|");
+				Output.imprimir("| 1\t| Consultar vôos\t\t|");
+				Output.imprimir("| 2\t| Cadastrar vôo\t\t\t|");
+				Output.imprimir("| 3\t| Remover vôo\t\t\t|");
+				Output.imprimir("| 4\t| Consultar hospedagens\t\t|");
+				Output.imprimir("| 5\t| Cadastrar hospedagem\t\t|");
+				Output.imprimir("| 6\t| Remover hospedagem\t\t|");
+				Output.imprimir();
+				Output.imprimirMesmaLinha("Selecione uma opção: ");
 
 				int opcao = scanner.nextInt();
+				scanner.nextLine();
+
+				String origem, destino, data;
+				Long numeroVagas, preco;
 
 				switch (opcao) {
 				case 1:
-					// Consultar passagens
+					// Consultar vôos
+					Output.imprimir();
+					Output.imprimirVoos(servidor.consultarVoos());
 					break;
 				case 2:
-					// Cadastrar passagem
+					// Cadastrar vôo
+					Output.imprimirMesmaLinha("Informe a origem: ");
+					origem = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe o destino: ");
+					destino = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe a data (dd/mm/aaaa): ");
+					data = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe o número de vagas: ");
+					numeroVagas = scanner.nextLong();
+
+					Output.imprimirMesmaLinha("Informe o preço de passagem unitário: ");
+					preco = scanner.nextLong();
+
+					Flight vooCadastro = new Flight();
+					vooCadastro.setOrigem(origem);
+					vooCadastro.setDestino(destino);
+					vooCadastro.setData(data);
+					vooCadastro.setVagas(numeroVagas);
+					vooCadastro.setPrecoUnitario(preco);
+
+					if (servidor.cadastrarVoo(vooCadastro)) {
+						Output.imprimir("Vôo cadastrado com sucesso");
+					} else {
+						Output.imprimir("Eror ao cadastrar vôo");
+					}
 					break;
 				case 3:
-					// Editar passagem
+					// Remover vôo
 					break;
 				case 4:
-					// Remover passagem
-					break;
-				case 5:
 					// Consultar hospedagens
 					break;
-				case 6:
+				case 5:
 					// Cadastrar hospedagem
 					break;
-				case 7:
-					// Editar hospedagem
-					break;
-				case 8:
+				case 6:
 					// Remover hospedagem
 					break;
 				default:

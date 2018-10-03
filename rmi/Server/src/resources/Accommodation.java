@@ -1,8 +1,12 @@
 package resources;
 
-public class Accommodation {
+import java.io.Serializable;
+
+public class Accommodation implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private Long id;
-	private String destino;
+	private String cidade;
 	private String dataEntrada;
 	private String dataSaida;
 	private Long numeroQuartos;
@@ -17,12 +21,12 @@ public class Accommodation {
 		this.id = id;
 	}
 
-	public String getDestino() {
-		return destino;
+	public String getCidade() {
+		return cidade;
 	}
 
-	public void setDestino(String destino) {
-		this.destino = destino;
+	public void setCidade(String cidade) {
+		this.cidade = cidade;
 	}
 
 	public String getDataEntrada() {

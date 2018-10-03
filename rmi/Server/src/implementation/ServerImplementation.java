@@ -4,39 +4,73 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import resources.Accommodation;
 import resources.Airfare;
+import resources.Flight;
 import resources.Interest;
+import resources.Package;
 import rmi.Client;
 import rmi.Server;
 
 public class ServerImplementation extends UnicastRemoteObject implements Server {
 	private static final long serialVersionUID = 1L;
 
-	private List<Airfare> passagens;
+	private List<Flight> voos;
 	private List<Accommodation> hospedagens;
 	private List<Interest> interesses;
+
+	private Long sequence;
 
 	public ServerImplementation() throws RemoteException {
 		super();
 
-		this.passagens = new ArrayList<>();
+		this.voos = new ArrayList<>();
 		this.hospedagens = new ArrayList<>();
 		this.interesses = new ArrayList<>();
+
+		this.sequence = 1L;
 	}
 
 	@Override
 	public List<Airfare> consultarPassagens(String origem, String destino, String dataIda, String dataVolta,
 			Long numeroPessoas) throws RemoteException {
-		// TODO: implementar
-		return this.passagens;
+		List<Flight> voosCompativeisIda = this.voos.stream()
+				.filter(voo -> voo.getOrigem().equals(origem) && voo.getDestino().equals(destino)
+						&& voo.getData().equals(dataIda) && voo.getVagas().compareTo(numeroPessoas) >= 0)
+				.collect(Collectors.toList());
+
+		if (dataVolta == null) {
+			return voosCompativeisIda.stream().map(vooIda -> {
+				Airfare passagemIda = new Airfare();
+				passagemIda.setIda(vooIda);
+				passagemIda.setNumeroPessoas(numeroPessoas);
+				passagemIda.setValorTotal(numeroPessoas * vooIda.getPrecoUnitario());
+				return passagemIda;
+			}).collect(Collectors.toList());
+		}
+
+		List<Flight> voosCompativeisVolta = this.voos.stream()
+				.filter(voo -> voo.getOrigem().equals(destino) && voo.getDestino().equals(origem)
+						&& voo.getData().equals(dataVolta) && voo.getVagas().compareTo(numeroPessoas) >= 0)
+				.collect(Collectors.toList());
+
+		// Cross join voosCompativeisIda x voosCompativeisVolta
+		return voosCompativeisIda.stream().flatMap(vooIda -> voosCompativeisVolta.stream().map(vooVolta -> {
+			Airfare passagemIdaVolta = new Airfare();
+			passagemIdaVolta.setIda(vooIda);
+			passagemIdaVolta.setVolta(vooVolta);
+			passagemIdaVolta.setNumeroPessoas(numeroPessoas);
+			passagemIdaVolta.setValorTotal(numeroPessoas * (vooIda.getPrecoUnitario() + vooVolta.getPrecoUnitario()));
+			return passagemIdaVolta;
+		})).collect(Collectors.toList());
 	}
 
 	@Override
 	public Boolean comprarPassagem(Airfare passagem) throws RemoteException {
 		// TODO: implementar
-		return null;
+		return Boolean.TRUE;
 	}
 
 	@Override
@@ -49,7 +83,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	@Override
 	public Boolean comprarHospedagem(Accommodation hospedagem) throws RemoteException {
 		// TODO: implementar
-		return null;
+		return Boolean.TRUE;
 	}
 
 	@Override
@@ -62,7 +96,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	@Override
 	public Boolean comprarPacote(Package pacote) throws RemoteException {
 		// TODO: implementar
-		return null;
+		return Boolean.TRUE;
 	}
 
 	@Override
@@ -74,49 +108,43 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	@Override
 	public Boolean registrarInteresse(Interest interesse) throws RemoteException {
 		// TODO: implementar
-		return null;
+		return Boolean.TRUE;
 	}
 
 	@Override
 	public Boolean removerInteresse(Interest interesse) throws RemoteException {
 		// TODO: implementar
-		return null;
+		return Boolean.TRUE;
 	}
 
 	@Override
-	public Boolean cadastrarPassagem(Airfare passagem) throws RemoteException {
-		// TODO: implementar
-		return null;
+	public List<Flight> consultarVoos() throws RemoteException {
+		return this.voos;
 	}
 
 	@Override
-	public Boolean editarPassagem(Airfare passagem) throws RemoteException {
-		// TODO: implementar
-		return null;
+	public Boolean cadastrarVoo(Flight voo) throws RemoteException {
+		voo.setId(sequence++);
+		this.voos.add(voo);
+		return Boolean.TRUE;
 	}
 
 	@Override
-	public Boolean removerPassagem(Airfare passagem) throws RemoteException {
+	public Boolean removerVoo(Flight voo) throws RemoteException {
 		// TODO: implementar
-		return null;
+		return Boolean.TRUE;
 	}
 
 	@Override
 	public Boolean cadastrarHospedagem(Accommodation hospedagem) throws RemoteException {
 		// TODO: implementar
-		return null;
-	}
-
-	@Override
-	public Boolean editarHospedagem(Accommodation hospedagem) throws RemoteException {
-		// TODO: implementar
-		return null;
+		return Boolean.TRUE;
 	}
 
 	@Override
 	public Boolean removerHospedagem(Accommodation hospedagem) throws RemoteException {
 		// TODO: implementar
-		return null;
+		return Boolean.TRUE;
 	}
 
 }

@@ -1,6 +1,9 @@
 package resources;
 
-public class Package {
+import java.io.Serializable;
+
+public class Package implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private Airfare passagem;
 	private Accommodation hospedagem;

@@ -1,65 +1,14 @@
 package resources;
 
-import enums.EnumAirfareType;
+import java.io.Serializable;
 
-public class Airfare {
-	private Long id;
-	private EnumAirfareType tipo;
-	private String origem;
-	private String destino;
-	private String dataIda;
-	private String dataVolta;
+public class Airfare implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private Long numeroPessoas;
-	private Long preco;
-
-	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public EnumAirfareType getTipo() {
-		return tipo;
-	}
-
-	public void setTipo(EnumAirfareType tipo) {
-		this.tipo = tipo;
-	}
-
-	public String getOrigem() {
-		return origem;
-	}
-
-	public void setOrigem(String origem) {
-		this.origem = origem;
-	}
-
-	public String getDestino() {
-		return destino;
-	}
-
-	public void setDestino(String destino) {
-		this.destino = destino;
-	}
-
-	public String getDataIda() {
-		return dataIda;
-	}
-
-	public void setDataIda(String dataIda) {
-		this.dataIda = dataIda;
-	}
-
-	public String getDataVolta() {
-		return dataVolta;
-	}
-
-	public void setDataVolta(String dataVolta) {
-		this.dataVolta = dataVolta;
-	}
+	private Long valorTotal;
+	private Flight ida;
+	private Flight volta;
 
 	public Long getNumeroPessoas() {
 		return numeroPessoas;
@@ -69,12 +18,28 @@ public class Airfare {
 		this.numeroPessoas = numeroPessoas;
 	}
 
-	public Long getPreco() {
-		return preco;
+	public Long getValorTotal() {
+		return valorTotal;
 	}
 
-	public void setPreco(Long preco) {
-		this.preco = preco;
+	public void setValorTotal(Long valorTotal) {
+		this.valorTotal = valorTotal;
+	}
+
+	public Flight getIda() {
+		return ida;
+	}
+
+	public void setIda(Flight ida) {
+		this.ida = ida;
+	}
+
+	public Flight getVolta() {
+		return volta;
+	}
+
+	public void setVolta(Flight volta) {
+		this.volta = volta;
 	}
 
 }
