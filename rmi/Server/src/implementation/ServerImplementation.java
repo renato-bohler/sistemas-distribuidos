@@ -164,9 +164,17 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	}
 
 	@Override
-	public String removerVoo(Flight voo) throws RemoteException {
-		// TODO: implementar
-		return "Ainda não implementado";
+	public String removerVoo(Flight vooArg) throws RemoteException {
+		Flight vooRemover = this.voos.stream().filter(voo -> voo.getId().equals(vooArg.getId())).findFirst()
+				.orElse(null);
+
+		if (vooRemover == null) {
+			return "Vôo não encontrado";
+		}
+
+		this.voos.remove(vooRemover);
+
+		return "Vôo removido com sucesso";
 	}
 
 	@Override

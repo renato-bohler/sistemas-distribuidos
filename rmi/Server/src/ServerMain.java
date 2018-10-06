@@ -44,7 +44,7 @@ public class ServerMain {
 				scanner.nextLine();
 
 				String origem, destino, data;
-				Long numeroVagas, preco;
+				Long numeroVagas, preco, codigo;
 
 				switch (opcao) {
 				case 1:
@@ -80,6 +80,14 @@ public class ServerMain {
 					break;
 				case 3:
 					// Remover vôo
+					Output.imprimirMesmaLinha("Informe o código: ");
+					codigo = scanner.nextLong();
+					scanner.nextLine();
+
+					Flight vooRemover = new Flight();
+					vooRemover.setId(codigo);
+
+					Output.imprimir(servidor.removerVoo(vooRemover));
 					break;
 				case 4:
 					// Consultar hospedagens
