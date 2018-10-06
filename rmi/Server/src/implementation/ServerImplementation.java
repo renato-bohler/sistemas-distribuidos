@@ -70,7 +70,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	@Override
 	public Boolean comprarPassagem(Airfare passagem) throws RemoteException {
 		Flight vooIda = this.voos.stream().filter(voo -> voo.getId().equals(passagem.getIda().getId())).findFirst()
-				.get();
+				.orElse(null);
 
 		if (vooIda == null) {
 			// Vôo de ida não encontrado
@@ -84,8 +84,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 		Flight vooVolta = null;
 		if (passagem.getVolta() != null) {
-			vooVolta = this.voos.stream().filter(voo -> voo.getId().equals(passagem.getVolta().getId())).findFirst()
-					.get();
+			vooVolta = this.voos.stream().filter(voo -> voo.getId().equals(passagem.getVolta().getId())).findFirst().orElse(null);
 
 			if (vooVolta == null) {
 				// Vôo de volta não encontrado
@@ -96,10 +95,17 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 				// Vôo de volta não possui vagas suficientes
 				return Boolean.FALSE;
 			}
+
+			vooVolta.setVagas(vooVolta.getVagas() - passagem.getNumeroPessoas());
+			if (vooVolta.getVagas().equals(0L)) {
+				this.voos.remove(vooVolta);
+			}
 		}
 
 		vooIda.setVagas(vooIda.getVagas() - passagem.getNumeroPessoas());
-		vooVolta.setVagas(vooVolta.getVagas() - passagem.getNumeroPessoas());
+		if (vooIda.getVagas().equals(0L)) {
+			this.voos.remove(vooIda);
+		}
 
 		return Boolean.TRUE;
 	}
