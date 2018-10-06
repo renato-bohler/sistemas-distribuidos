@@ -155,8 +155,16 @@ public class ClientMain {
 					Output.imprimirMesmaLinha("Informe o código da passagem: ");
 					codigo = scanner.nextLong();
 
+					Output.imprimirMesmaLinha("Informe o número de quartos: ");
+					numeroQuartos = scanner.nextLong();
+
+					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
+					numeroPessoas = scanner.nextLong();
+
 					Accommodation hospedagem = new Accommodation();
 					hospedagem.setId(codigo);
+					hospedagem.setNumeroQuartos(numeroQuartos);
+					hospedagem.setNumeroPessoas(numeroPessoas);
 
 					Output.imprimir(servidor.comprarHospedagem(hospedagem));
 					break;

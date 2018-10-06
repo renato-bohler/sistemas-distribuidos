@@ -117,9 +117,30 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	}
 
 	@Override
-	public String comprarHospedagem(Accommodation hospedagem) throws RemoteException {
-		// TODO: implementar
-		return "Ainda não implementado";
+	public String comprarHospedagem(Accommodation hospedagemArg) throws RemoteException {
+		Accommodation hospedagemCompra = this.hospedagens.stream()
+				.filter(hospedagem -> hospedagem.getId().equals(hospedagemArg.getId())).findFirst().orElse(null);
+
+		if (hospedagemCompra == null) {
+			return "Hospedagem não encontrada";
+		}
+
+		if (hospedagemCompra.getNumeroQuartos().compareTo(hospedagemArg.getNumeroQuartos()) < 0) {
+			return "Não existem quartos suficientes nesta hospedagem";
+		}
+
+		if (hospedagemCompra.getNumeroPessoas().compareTo(hospedagemArg.getNumeroPessoas()) < 0) {
+			return "Não existem vagas suficientes nesta hospedagem";
+		}
+
+		hospedagemCompra.setNumeroQuartos(hospedagemCompra.getNumeroQuartos() - hospedagemArg.getNumeroQuartos());
+		hospedagemCompra.setNumeroPessoas(hospedagemCompra.getNumeroPessoas() - hospedagemArg.getNumeroPessoas());
+
+		if (hospedagemCompra.getNumeroQuartos().equals(0L) || hospedagemCompra.getNumeroPessoas().equals(0L)) {
+			this.hospedagens.remove(hospedagemCompra);
+		}
+
+		return "Hospedagem comprada com sucesso";
 	}
 
 	@Override
