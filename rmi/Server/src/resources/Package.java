@@ -7,6 +7,7 @@ public class Package implements Serializable {
 
 	private Airfare passagem;
 	private Accommodation hospedagem;
+	private Long valorTotal;
 
 	public Airfare getPassagem() {
 		return passagem;
@@ -22,6 +23,14 @@ public class Package implements Serializable {
 
 	public void setHospedagem(Accommodation hospedagem) {
 		this.hospedagem = hospedagem;
+	}
+
+	public Long getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(Long valorTotal) {
+		this.valorTotal = valorTotal;
 	}
 
 }

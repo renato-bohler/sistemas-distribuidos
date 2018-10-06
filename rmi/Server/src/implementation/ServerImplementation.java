@@ -120,7 +120,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 							+ hospedagem.getPrecoPorPessoa() * numeroPessoas);
 					return hospedagem;
 				}).collect(Collectors.toList());
-
 	}
 
 	@Override
@@ -153,8 +152,18 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	@Override
 	public List<Package> consultarPacotes(String origem, String destino, String dataIda, String dataVolta,
 			Long numeroQuartos, Long numeroPessoas) throws RemoteException {
-		// TODO: implementar
-		return null;
+		List<Airfare> passagensIdaEVolta = this.consultarPassagens(origem, destino, dataIda, dataVolta, numeroPessoas);
+		List<Accommodation> hospedagens = this.consultarHospedagens(destino, dataIda, dataVolta, numeroQuartos,
+				numeroPessoas);
+
+		// Cross join passagensIdaEVolta x hospedagens
+		return passagensIdaEVolta.stream().flatMap(passagem -> hospedagens.stream().map(hospedagem -> {
+			Package pacote = new Package();
+			pacote.setPassagem(passagem);
+			pacote.setHospedagem(hospedagem);
+			pacote.setValorTotal(passagem.getValorTotal() + hospedagem.getValorTotal());
+			return pacote;
+		})).collect(Collectors.toList());
 	}
 
 	@Override

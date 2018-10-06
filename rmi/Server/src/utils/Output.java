@@ -5,6 +5,7 @@ import java.util.List;
 import resources.Accommodation;
 import resources.Airfare;
 import resources.Flight;
+import resources.Package;
 
 public class Output {
 	private static final String DIVISOR = "---------------------------";
@@ -71,16 +72,37 @@ public class Output {
 			imprimir("Cidade:\t\t" + hospedagem.getCidade());
 			imprimir("Data entrada:\t" + hospedagem.getDataEntrada());
 			imprimir("Data saída:\t" + hospedagem.getDataSaida());
-			imprimir("Nº quartos:\t" + hospedagem.getNumeroQuartos());
-			if (hospedagem.getValorTotal() == null) {
-				imprimir("Preço por quarto:\tR$ " + hospedagem.getPrecoPorQuarto() + ",00");
-			}
 			imprimir("Nº pessoas:\t" + hospedagem.getNumeroPessoas());
 			if (hospedagem.getValorTotal() == null) {
 				imprimir("Preço por pessoa:\tR$ " + hospedagem.getPrecoPorPessoa() + ",00");
+			}
+			imprimir("Nº quartos:\t" + hospedagem.getNumeroQuartos());
+			if (hospedagem.getValorTotal() == null) {
+				imprimir("Preço por quarto:\tR$ " + hospedagem.getPrecoPorQuarto() + ",00");
 			} else {
 				imprimir("Valor total:\tR$ " + hospedagem.getValorTotal() + ",00");
 			}
+		}
+		imprimir(DIVISOR);
+	}
+
+	public static void imprimirPacotes(List<Package> pacotes) {
+		if (pacotes.isEmpty()) {
+			imprimir("Nenhum pacote encontrado");
+			return;
+		}
+
+		for (Package pacote : pacotes) {
+			imprimir(DIVISOR);
+			imprimir("Código:\t\t" + pacote.getHospedagem().getId() + "-" + pacote.getPassagem().getIda().getId() + "-"
+					+ pacote.getPassagem().getVolta().getId());
+			imprimir("Origem:\t\t" + pacote.getPassagem().getIda().getOrigem());
+			imprimir("Destino:\t" + pacote.getPassagem().getIda().getDestino());
+			imprimir("Data ida:\t" + pacote.getPassagem().getIda().getData());
+			imprimir("Data volta:\t" + pacote.getPassagem().getVolta().getData());
+			imprimir("Nº pessoas:\t" + pacote.getHospedagem().getNumeroPessoas());
+			imprimir("Nº quartos:\t" + pacote.getHospedagem().getNumeroQuartos());
+			imprimir("Valor total:\tR$ " + pacote.getValorTotal() + ",00");
 		}
 		imprimir(DIVISOR);
 	}

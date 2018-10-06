@@ -189,10 +189,8 @@ public class ClientMain {
 					numeroPessoas = scanner.nextLong();
 
 					Output.imprimir();
-					// TODO: guardar a lista de pacotes para a chamada de compra
-					Output.imprimir(
-							servidor.consultarPacotes(origem, destino, dataIda, dataVolta, numeroQuartos, numeroPessoas)
-									.toString());
+					Output.imprimirPacotes(servidor.consultarPacotes(origem, destino, dataIda, dataVolta, numeroQuartos,
+							numeroPessoas));
 					break;
 				case 6:
 					// Comprar pacote
