@@ -38,6 +38,8 @@ public interface Server extends Remote {
 
 	public String removerVoo(Flight voo) throws RemoteException;
 
+	public List<Accommodation> consultarHospedagens() throws RemoteException;
+
 	public String cadastrarHospedagem(Accommodation hospedagem) throws RemoteException;
 
 	public String removerHospedagem(Accommodation hospedagem) throws RemoteException;

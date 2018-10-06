@@ -131,28 +131,24 @@ public class ClientMain {
 					break;
 				case 3:
 					// Consultar hospedagens
-					Output.imprimirMesmaLinha("Informe a origem: ");
-					origem = scanner.nextLine();
-
 					Output.imprimirMesmaLinha("Informe o destino: ");
 					destino = scanner.nextLine();
 
-					Output.imprimirMesmaLinha("Informe a data de ida (dd/mm/aaaa): ");
+					Output.imprimirMesmaLinha("Informe a data de entrada (dd/mm/aaaa): ");
 					dataEntrada = scanner.nextLine();
 
-					Output.imprimirMesmaLinha("Informe a data de volta (dd/mm/aaaa): ");
+					Output.imprimirMesmaLinha("Informe a data de saída (dd/mm/aaaa): ");
 					dataSaida = scanner.nextLine();
 
-					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
+					Output.imprimirMesmaLinha("Informe o número de quartos: ");
 					numeroQuartos = scanner.nextLong();
 
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
 
 					Output.imprimir();
-					Output.imprimir(
-							servidor.consultarHospedagens(destino, dataEntrada, dataSaida, numeroQuartos, numeroPessoas)
-									.toString());
+					Output.imprimirHospedagens(servidor.consultarHospedagens(destino, dataEntrada, dataSaida,
+							numeroQuartos, numeroPessoas));
 					break;
 				case 4:
 					// Comprar hospedagem

@@ -110,8 +110,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	@Override
 	public List<Accommodation> consultarHospedagens(String destino, String dataEntrada, String dataSaida,
 			Long numeroQuartos, Long numeroPessoas) throws RemoteException {
-		// TODO: implementar
-		return this.hospedagens;
+		return this.hospedagens.stream().filter(hospedagem -> hospedagem.getCidade().equals(destino)
+				&& hospedagem.getDataEntrada().equals(dataEntrada) && hospedagem.getDataSaida().equals(dataSaida)
+				&& hospedagem.getNumeroQuartos().compareTo(numeroQuartos) >= 0
+				&& hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0).collect(Collectors.toList());
 	}
 
 	@Override
@@ -178,15 +180,29 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	}
 
 	@Override
-	public String cadastrarHospedagem(Accommodation hospedagem) throws RemoteException {
-		// TODO: implementar
-		return "Ainda não implementado";
+	public List<Accommodation> consultarHospedagens() throws RemoteException {
+		return this.hospedagens;
 	}
 
 	@Override
-	public String removerHospedagem(Accommodation hospedagem) throws RemoteException {
-		// TODO: implementar
-		return "Ainda não implementado";
+	public String cadastrarHospedagem(Accommodation hospedagem) throws RemoteException {
+		hospedagem.setId(sequence++);
+		this.hospedagens.add(hospedagem);
+		return "Hospedagem cadastrada com sucesso";
+	}
+
+	@Override
+	public String removerHospedagem(Accommodation hospedagemArg) throws RemoteException {
+		Accommodation hospedagemRemover = this.hospedagens.stream()
+				.filter(hospedagem -> hospedagem.getId().equals(hospedagemArg.getId())).findFirst().orElse(null);
+
+		if (hospedagemRemover == null) {
+			return "Hospedagem não encontrada";
+		}
+
+		this.hospedagens.remove(hospedagemRemover);
+
+		return "Hospedagem removida com sucesso";
 	}
 
 }

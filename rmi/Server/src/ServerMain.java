@@ -7,6 +7,7 @@ import java.util.Scanner;
 import constants.Names;
 import constants.Network;
 import implementation.ServerImplementation;
+import resources.Accommodation;
 import resources.Flight;
 import rmi.Server;
 import utils.Output;
@@ -43,8 +44,8 @@ public class ServerMain {
 				int opcao = scanner.nextInt();
 				scanner.nextLine();
 
-				String origem, destino, data;
-				Long numeroVagas, preco, codigo;
+				String origem, destino, cidade, data, dataEntrada, dataSaida;
+				Long codigo, numeroVagas, numeroQuartos, numeroPessoas, preco;
 
 				switch (opcao) {
 				case 1:
@@ -82,7 +83,6 @@ public class ServerMain {
 					// Remover vôo
 					Output.imprimirMesmaLinha("Informe o código: ");
 					codigo = scanner.nextLong();
-					scanner.nextLine();
 
 					Flight vooRemover = new Flight();
 					vooRemover.setId(codigo);
@@ -91,12 +91,48 @@ public class ServerMain {
 					break;
 				case 4:
 					// Consultar hospedagens
+					Output.imprimir();
+					Output.imprimirHospedagens(servidor.consultarHospedagens());
 					break;
 				case 5:
 					// Cadastrar hospedagem
+					Output.imprimirMesmaLinha("Informe a cidade: ");
+					cidade = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe a data de entrada (dd/mm/aaaa): ");
+					dataEntrada = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe a data de saída (dd/mm/aaaa): ");
+					dataSaida = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe o número de quartos: ");
+					numeroQuartos = scanner.nextLong();
+
+					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
+					numeroPessoas = scanner.nextLong();
+
+					Output.imprimirMesmaLinha("Informe o valor total: ");
+					preco = scanner.nextLong();
+
+					Accommodation hospedagemCadastro = new Accommodation();
+					hospedagemCadastro.setCidade(cidade);
+					hospedagemCadastro.setDataEntrada(dataEntrada);
+					hospedagemCadastro.setDataSaida(dataSaida);
+					hospedagemCadastro.setNumeroQuartos(numeroQuartos);
+					hospedagemCadastro.setNumeroPessoas(numeroPessoas);
+					hospedagemCadastro.setPreco(preco);
+
+					Output.imprimir(servidor.cadastrarHospedagem(hospedagemCadastro));
 					break;
 				case 6:
 					// Remover hospedagem
+					Output.imprimirMesmaLinha("Informe o código: ");
+					codigo = scanner.nextLong();
+
+					Accommodation hospedagemRemover = new Accommodation();
+					hospedagemRemover.setId(codigo);
+
+					Output.imprimir(servidor.removerHospedagem(hospedagemRemover));
 					break;
 				default:
 					break;
