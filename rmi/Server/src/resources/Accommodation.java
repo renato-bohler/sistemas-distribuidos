@@ -11,7 +11,9 @@ public class Accommodation implements Serializable {
 	private String dataSaida;
 	private Long numeroQuartos;
 	private Long numeroPessoas;
-	private Long preco;
+	private Long precoPorQuarto;
+	private Long precoPorPessoa;
+	private Long valorTotal;
 
 	public Long getId() {
 		return id;
@@ -61,12 +63,28 @@ public class Accommodation implements Serializable {
 		this.numeroPessoas = numeroPessoas;
 	}
 
-	public Long getPreco() {
-		return preco;
+	public Long getPrecoPorQuarto() {
+		return precoPorQuarto;
 	}
 
-	public void setPreco(Long preco) {
-		this.preco = preco;
+	public void setPrecoPorQuarto(Long precoPorQuarto) {
+		this.precoPorQuarto = precoPorQuarto;
+	}
+
+	public Long getPrecoPorPessoa() {
+		return precoPorPessoa;
+	}
+
+	public void setPrecoPorPessoa(Long precoPorPessoa) {
+		this.precoPorPessoa = precoPorPessoa;
+	}
+
+	public Long getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(Long valorTotal) {
+		this.valorTotal = valorTotal;
 	}
 
 }

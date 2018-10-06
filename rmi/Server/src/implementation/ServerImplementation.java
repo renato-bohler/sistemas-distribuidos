@@ -113,7 +113,14 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		return this.hospedagens.stream().filter(hospedagem -> hospedagem.getCidade().equals(destino)
 				&& hospedagem.getDataEntrada().equals(dataEntrada) && hospedagem.getDataSaida().equals(dataSaida)
 				&& hospedagem.getNumeroQuartos().compareTo(numeroQuartos) >= 0
-				&& hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0).collect(Collectors.toList());
+				&& hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0).map(hospedagem -> {
+					hospedagem.setNumeroQuartos(numeroQuartos);
+					hospedagem.setNumeroPessoas(numeroPessoas);
+					hospedagem.setValorTotal(hospedagem.getPrecoPorQuarto() * numeroQuartos
+							+ hospedagem.getPrecoPorPessoa() * numeroPessoas);
+					return hospedagem;
+				}).collect(Collectors.toList());
+
 	}
 
 	@Override

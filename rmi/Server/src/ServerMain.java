@@ -45,7 +45,7 @@ public class ServerMain {
 				scanner.nextLine();
 
 				String origem, destino, cidade, data, dataEntrada, dataSaida;
-				Long codigo, numeroVagas, numeroQuartos, numeroPessoas, preco;
+				Long codigo, numeroVagas, numeroQuartos, numeroPessoas, preco, precoPorQuarto, precoPorPessoa;
 
 				switch (opcao) {
 				case 1:
@@ -111,8 +111,11 @@ public class ServerMain {
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
 
-					Output.imprimirMesmaLinha("Informe o valor total: ");
-					preco = scanner.nextLong();
+					Output.imprimirMesmaLinha("Informe o preço por quarto: ");
+					precoPorQuarto = scanner.nextLong();
+
+					Output.imprimirMesmaLinha("Informe o preço por pessoa: ");
+					precoPorPessoa = scanner.nextLong();
 
 					Accommodation hospedagemCadastro = new Accommodation();
 					hospedagemCadastro.setCidade(cidade);
@@ -120,7 +123,8 @@ public class ServerMain {
 					hospedagemCadastro.setDataSaida(dataSaida);
 					hospedagemCadastro.setNumeroQuartos(numeroQuartos);
 					hospedagemCadastro.setNumeroPessoas(numeroPessoas);
-					hospedagemCadastro.setPreco(preco);
+					hospedagemCadastro.setPrecoPorQuarto(precoPorQuarto);
+					hospedagemCadastro.setPrecoPorPessoa(precoPorPessoa);
 
 					Output.imprimir(servidor.cadastrarHospedagem(hospedagemCadastro));
 					break;
