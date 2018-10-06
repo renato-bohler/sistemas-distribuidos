@@ -33,10 +33,10 @@ public class ClientMain {
 				Output.imprimir();
 				Output.imprimir("| #\t| Ação\t\t\t\t|");
 				Output.imprimir("| 1\t| Consultar passagens\t\t|");
-				Output.imprimir("| 2\t| Consultar hospedagens\t\t|");
-				Output.imprimir("| 3\t| Consultar pacotes\t\t|");
-				Output.imprimir("| 4\t| Comprar passagem\t\t|");
-				Output.imprimir("| 5\t| Comprar hospedagem\t\t|");
+				Output.imprimir("| 2\t| Comprar passagem\t\t|");
+				Output.imprimir("| 3\t| Consultar hospedagens\t\t|");
+				Output.imprimir("| 4\t| Comprar hospedagem\t\t|");
+				Output.imprimir("| 5\t| Consultar pacotes\t\t|");
 				Output.imprimir("| 6\t| Comprar pacote\t\t|");
 				Output.imprimir("| 7\t| Consultar interesses\t\t|");
 				Output.imprimir("| 8\t| Registrar interesse\t\t|");
@@ -94,58 +94,7 @@ public class ClientMain {
 					Output.imprimir();
 					break;
 				case 2:
-					// Consultar hospedagens
-					Output.imprimirMesmaLinha("Informe a origem: ");
-					origem = scanner.nextLine();
-
-					Output.imprimirMesmaLinha("Informe o destino: ");
-					destino = scanner.nextLine();
-
-					Output.imprimirMesmaLinha("Informe a data de ida (dd/mm/aaaa): ");
-					dataEntrada = scanner.nextLine();
-
-					Output.imprimirMesmaLinha("Informe a data de volta (dd/mm/aaaa): ");
-					dataSaida = scanner.nextLine();
-
-					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
-					numeroQuartos = scanner.nextLong();
-
-					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
-					numeroPessoas = scanner.nextLong();
-
-					Output.imprimir();
-					Output.imprimir(
-							servidor.consultarHospedagens(destino, dataEntrada, dataSaida, numeroQuartos, numeroPessoas)
-									.toString());
-					break;
-				case 3:
-					// Consultar pacotes
-					Output.imprimirMesmaLinha("Informe a origem: ");
-					origem = scanner.nextLine();
-
-					Output.imprimirMesmaLinha("Informe o destino: ");
-					destino = scanner.nextLine();
-
-					Output.imprimirMesmaLinha("Informe a data de ida (dd/mm/aaaa): ");
-					dataIda = scanner.nextLine();
-
-					Output.imprimirMesmaLinha("Informe a data de volta (dd/mm/aaaa): ");
-					dataVolta = scanner.nextLine();
-
-					Output.imprimirMesmaLinha("Informe o número de quartos: ");
-					numeroQuartos = scanner.nextLong();
-
-					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
-					numeroPessoas = scanner.nextLong();
-
-					Output.imprimir();
-					// TODO: guardar a lista de pacotes para a chamada de compra
-					Output.imprimir(
-							servidor.consultarPacotes(origem, destino, dataIda, dataVolta, numeroQuartos, numeroPessoas)
-									.toString());
-					break;
-				case 4:
-					// Comprar passagens
+					// Comprar passagem
 					Output.imprimirMesmaLinha("Informe o código da passagem: ");
 					String codigoPassagem = scanner.nextLine();
 
@@ -184,8 +133,33 @@ public class ClientMain {
 					}
 
 					break;
-				case 5:
-					// Comprar hospedagens
+				case 3:
+					// Consultar hospedagens
+					Output.imprimirMesmaLinha("Informe a origem: ");
+					origem = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe o destino: ");
+					destino = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe a data de ida (dd/mm/aaaa): ");
+					dataEntrada = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe a data de volta (dd/mm/aaaa): ");
+					dataSaida = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
+					numeroQuartos = scanner.nextLong();
+
+					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
+					numeroPessoas = scanner.nextLong();
+
+					Output.imprimir();
+					Output.imprimir(
+							servidor.consultarHospedagens(destino, dataEntrada, dataSaida, numeroQuartos, numeroPessoas)
+									.toString());
+					break;
+				case 4:
+					// Comprar hospedagem
 					Output.imprimirMesmaLinha("Informe o código da passagem: ");
 					codigo = scanner.nextLong();
 
@@ -198,8 +172,34 @@ public class ClientMain {
 						Output.imprimir("Erro ao comprar passagem");
 					}
 					break;
+				case 5:
+					// Consultar pacotes
+					Output.imprimirMesmaLinha("Informe a origem: ");
+					origem = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe o destino: ");
+					destino = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe a data de ida (dd/mm/aaaa): ");
+					dataIda = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe a data de volta (dd/mm/aaaa): ");
+					dataVolta = scanner.nextLine();
+
+					Output.imprimirMesmaLinha("Informe o número de quartos: ");
+					numeroQuartos = scanner.nextLong();
+
+					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
+					numeroPessoas = scanner.nextLong();
+
+					Output.imprimir();
+					// TODO: guardar a lista de pacotes para a chamada de compra
+					Output.imprimir(
+							servidor.consultarPacotes(origem, destino, dataIda, dataVolta, numeroQuartos, numeroPessoas)
+									.toString());
+					break;
 				case 6:
-					// Comprar pacotes
+					// Comprar pacote
 					Output.imprimirMesmaLinha("Informe o código do pacote: ");
 					codigo = scanner.nextLong();
 
