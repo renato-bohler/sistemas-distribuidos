@@ -126,11 +126,7 @@ public class ClientMain {
 
 					passagem.setNumeroPessoas(numeroPessoas);
 
-					if (servidor.comprarPassagem(passagem)) {
-						Output.imprimir("Passagem comprada com sucesso");
-					} else {
-						Output.imprimir("Erro ao comprar passagem");
-					}
+					Output.imprimir(servidor.comprarPassagem(passagem));
 
 					break;
 				case 3:
@@ -166,11 +162,7 @@ public class ClientMain {
 					Accommodation hospedagem = new Accommodation();
 					hospedagem.setId(codigo);
 
-					if (servidor.comprarHospedagem(hospedagem)) {
-						Output.imprimir("Passagem comprada com sucesso");
-					} else {
-						Output.imprimir("Erro ao comprar passagem");
-					}
+					Output.imprimir(servidor.comprarHospedagem(hospedagem));
 					break;
 				case 5:
 					// Consultar pacotes
@@ -207,11 +199,7 @@ public class ClientMain {
 					// correspondente
 					Package pacote = new Package();
 
-					if (servidor.comprarPacote(pacote)) {
-						Output.imprimir("Passagem comprada com sucesso");
-					} else {
-						Output.imprimir("Erro ao comprar passagem");
-					}
+					Output.imprimir(servidor.comprarPacote(pacote));
 					break;
 				case 7:
 					// Consultar interesses
@@ -257,11 +245,7 @@ public class ClientMain {
 					interesseCadastro.setDestinoDesejado(destino);
 					interesseCadastro.setPrecoMaximo(preco);
 
-					if (servidor.registrarInteresse(interesseCadastro)) {
-						Output.imprimir("Interesse registrado com sucesso");
-					} else {
-						Output.imprimir("Erro ao registrar interesse");
-					}
+					Output.imprimir(servidor.registrarInteresse(interesseCadastro));
 					break;
 				case 9:
 					// Cancelar interesse
@@ -271,11 +255,7 @@ public class ClientMain {
 					Interest interesseCancelamento = new Interest();
 					interesseCancelamento.setId(codigo);
 
-					if (servidor.removerInteresse(interesseCancelamento)) {
-						Output.imprimir("Interesse cancelado com sucesso");
-					} else {
-						Output.imprimir("Erro ao cancelar interesse");
-					}
+					Output.imprimir(servidor.removerInteresse(interesseCancelamento));
 					break;
 				default:
 					break;

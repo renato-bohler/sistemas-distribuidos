@@ -76,11 +76,7 @@ public class ServerMain {
 					vooCadastro.setVagas(numeroVagas);
 					vooCadastro.setPrecoUnitario(preco);
 
-					if (servidor.cadastrarVoo(vooCadastro)) {
-						Output.imprimir("Vôo cadastrado com sucesso");
-					} else {
-						Output.imprimir("Eror ao cadastrar vôo");
-					}
+					Output.imprimir(servidor.cadastrarVoo(vooCadastro));
 					break;
 				case 3:
 					// Remover vôo

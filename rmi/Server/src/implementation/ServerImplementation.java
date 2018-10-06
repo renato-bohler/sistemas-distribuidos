@@ -68,32 +68,29 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	}
 
 	@Override
-	public Boolean comprarPassagem(Airfare passagem) throws RemoteException {
+	public String comprarPassagem(Airfare passagem) throws RemoteException {
 		Flight vooIda = this.voos.stream().filter(voo -> voo.getId().equals(passagem.getIda().getId())).findFirst()
 				.orElse(null);
 
 		if (vooIda == null) {
-			// Vôo de ida não encontrado
-			return Boolean.FALSE;
+			return "Vôo de ida não encontrado";
 		}
 
 		if (vooIda.getVagas().compareTo(passagem.getNumeroPessoas()) < 0) {
-			// Vôo de ida não possui vagas suficientes
-			return Boolean.FALSE;
+			return "Vôo de ida não possui vagas suficientes";
 		}
 
 		Flight vooVolta = null;
 		if (passagem.getVolta() != null) {
-			vooVolta = this.voos.stream().filter(voo -> voo.getId().equals(passagem.getVolta().getId())).findFirst().orElse(null);
+			vooVolta = this.voos.stream().filter(voo -> voo.getId().equals(passagem.getVolta().getId())).findFirst()
+					.orElse(null);
 
 			if (vooVolta == null) {
-				// Vôo de volta não encontrado
-				return Boolean.FALSE;
+				return "Vôo de volta não encontrado";
 			}
 
 			if (vooIda.getVagas().compareTo(passagem.getNumeroPessoas()) < 0) {
-				// Vôo de volta não possui vagas suficientes
-				return Boolean.FALSE;
+				return "Vôo de volta não possui vagas suficientes";
 			}
 
 			vooVolta.setVagas(vooVolta.getVagas() - passagem.getNumeroPessoas());
@@ -107,7 +104,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 			this.voos.remove(vooIda);
 		}
 
-		return Boolean.TRUE;
+		return "Passagem comprada com sucesso";
 	}
 
 	@Override
@@ -118,9 +115,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	}
 
 	@Override
-	public Boolean comprarHospedagem(Accommodation hospedagem) throws RemoteException {
+	public String comprarHospedagem(Accommodation hospedagem) throws RemoteException {
 		// TODO: implementar
-		return Boolean.TRUE;
+		return "Ainda não implementado";
 	}
 
 	@Override
@@ -131,9 +128,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	}
 
 	@Override
-	public Boolean comprarPacote(Package pacote) throws RemoteException {
+	public String comprarPacote(Package pacote) throws RemoteException {
 		// TODO: implementar
-		return Boolean.TRUE;
+		return "Ainda não implementado";
 	}
 
 	@Override
@@ -143,15 +140,15 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	}
 
 	@Override
-	public Boolean registrarInteresse(Interest interesse) throws RemoteException {
+	public String registrarInteresse(Interest interesse) throws RemoteException {
 		// TODO: implementar
-		return Boolean.TRUE;
+		return "Ainda não implementado";
 	}
 
 	@Override
-	public Boolean removerInteresse(Interest interesse) throws RemoteException {
+	public String removerInteresse(Interest interesse) throws RemoteException {
 		// TODO: implementar
-		return Boolean.TRUE;
+		return "Ainda não implementado";
 	}
 
 	@Override
@@ -160,28 +157,28 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	}
 
 	@Override
-	public Boolean cadastrarVoo(Flight voo) throws RemoteException {
+	public String cadastrarVoo(Flight voo) throws RemoteException {
 		voo.setId(sequence++);
 		this.voos.add(voo);
-		return Boolean.TRUE;
+		return "Vôo cadastrado com sucesso";
 	}
 
 	@Override
-	public Boolean removerVoo(Flight voo) throws RemoteException {
+	public String removerVoo(Flight voo) throws RemoteException {
 		// TODO: implementar
-		return Boolean.TRUE;
+		return "Ainda não implementado";
 	}
 
 	@Override
-	public Boolean cadastrarHospedagem(Accommodation hospedagem) throws RemoteException {
+	public String cadastrarHospedagem(Accommodation hospedagem) throws RemoteException {
 		// TODO: implementar
-		return Boolean.TRUE;
+		return "Ainda não implementado";
 	}
 
 	@Override
-	public Boolean removerHospedagem(Accommodation hospedagem) throws RemoteException {
+	public String removerHospedagem(Accommodation hospedagem) throws RemoteException {
 		// TODO: implementar
-		return Boolean.TRUE;
+		return "Ainda não implementado";
 	}
 
 }
