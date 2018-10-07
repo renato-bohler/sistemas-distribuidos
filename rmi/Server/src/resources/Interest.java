@@ -11,7 +11,10 @@ public class Interest implements Serializable {
 	private Long id;
 	private Client cliente;
 	private EnumDesiredEvent eventoDesejado;
-	private String destinoDesejado;
+	private String origem;
+	private String destino;
+	private Long numeroQuartos;
+	private Long numeroPessoas;
 	private Long precoMaximo;
 
 	public Long getId() {
@@ -38,12 +41,36 @@ public class Interest implements Serializable {
 		this.eventoDesejado = eventoDesejado;
 	}
 
-	public String getDestinoDesejado() {
-		return destinoDesejado;
+	public String getOrigem() {
+		return origem;
 	}
 
-	public void setDestinoDesejado(String destinoDesejado) {
-		this.destinoDesejado = destinoDesejado;
+	public void setOrigem(String origem) {
+		this.origem = origem;
+	}
+
+	public String getDestino() {
+		return destino;
+	}
+
+	public void setDestino(String destino) {
+		this.destino = destino;
+	}
+
+	public Long getNumeroQuartos() {
+		return numeroQuartos;
+	}
+
+	public void setNumeroQuartos(Long numeroQuartos) {
+		this.numeroQuartos = numeroQuartos;
+	}
+
+	public Long getNumeroPessoas() {
+		return numeroPessoas;
+	}
+
+	public void setNumeroPessoas(Long numeroPessoas) {
+		this.numeroPessoas = numeroPessoas;
 	}
 
 	public Long getPrecoMaximo() {

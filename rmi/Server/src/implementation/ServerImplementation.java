@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import enums.EnumDesiredEvent;
 import resources.Accommodation;
 import resources.Airfare;
 import resources.Flight;
@@ -38,7 +39,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 			Long numeroPessoas) throws RemoteException {
 		List<Flight> voosCompativeisIda = this.voos.stream()
 				.filter(voo -> voo.getOrigem().equals(origem) && voo.getDestino().equals(destino)
-						&& voo.getData().equals(dataIda) && voo.getVagas().compareTo(numeroPessoas) >= 0)
+						&& (dataIda == null || voo.getData().equals(dataIda))
+						&& voo.getVagas().compareTo(numeroPessoas) >= 0)
 				.collect(Collectors.toList());
 
 		if (dataVolta == null) {
@@ -117,10 +119,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	@Override
 	public List<Accommodation> consultarHospedagens(String destino, String dataEntrada, String dataSaida,
 			Long numeroQuartos, Long numeroPessoas) throws RemoteException {
-		return this.hospedagens.stream().filter(hospedagem -> hospedagem.getCidade().equals(destino)
-				&& hospedagem.getDataEntrada().equals(dataEntrada) && hospedagem.getDataSaida().equals(dataSaida)
-				&& hospedagem.getNumeroQuartos().compareTo(numeroQuartos) >= 0
-				&& hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0).map(hospedagem -> {
+		return this.hospedagens.stream()
+				.filter(hospedagem -> hospedagem.getCidade().equals(destino)
+						&& (dataEntrada == null || hospedagem.getDataEntrada().equals(dataEntrada))
+						&& (dataSaida == null || hospedagem.getDataSaida().equals(dataSaida))
+						&& hospedagem.getNumeroQuartos().compareTo(numeroQuartos) >= 0
+						&& hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0)
+				.map(hospedagem -> {
 					hospedagem.setNumeroQuartos(numeroQuartos);
 					hospedagem.setNumeroPessoas(numeroPessoas);
 					hospedagem.setValorTotal(hospedagem.getPrecoPorQuarto() * numeroQuartos
@@ -262,6 +267,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	public String cadastrarVoo(Flight voo) throws RemoteException {
 		voo.setId(sequence++);
 		this.voos.add(voo);
+		this.notificarCadastroVoo(voo);
 		return "Vôo cadastrado com sucesso";
 	}
 
@@ -288,6 +294,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	public String cadastrarHospedagem(Accommodation hospedagem) throws RemoteException {
 		hospedagem.setId(sequence++);
 		this.hospedagens.add(hospedagem);
+		this.notificarCadastroHospedagem(hospedagem);
 		return "Hospedagem cadastrada com sucesso";
 	}
 
@@ -305,4 +312,70 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		return "Hospedagem removida com sucesso";
 	}
 
+	private void notificarCadastroVoo(Flight novoVoo) {
+		this.interesses.forEach(interesse -> {
+			if (interesse.getEventoDesejado().equals(EnumDesiredEvent.PASSAGEM_E_HOSPEDAGEM)) {
+				// TODO: pacote
+			}
+
+			if (!interesse.getEventoDesejado().equals(EnumDesiredEvent.SOMENTE_PASSAGEM)
+					|| !interesse.getOrigem().equals(novoVoo.getOrigem())
+					|| !interesse.getDestino().equals(novoVoo.getDestino())
+					|| interesse.getNumeroPessoas().compareTo(novoVoo.getVagas()) > 0) {
+				return;
+			}
+
+			try {
+				this.consultarPassagens(
+						interesse.getOrigem(), interesse.getDestino(), null, null, interesse.getNumeroPessoas())
+						.stream()
+						.filter(passagem -> (passagem.getIda().getId().equals(novoVoo.getId())
+								|| (passagem.getVolta() != null && passagem.getVolta().getId().equals(novoVoo.getId())))
+								&& passagem.getValorTotal().compareTo(interesse.getPrecoMaximo()) <= 0)
+						.forEach(passagemNotificacao -> {
+							try {
+								interesse.getCliente().notificar(passagemNotificacao);
+							} catch (RemoteException e) {
+								e.printStackTrace();
+							}
+						});
+
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	private void notificarCadastroHospedagem(Accommodation novaHospedagem) {
+		this.interesses.forEach(interesse -> {
+			if (interesse.getEventoDesejado().equals(EnumDesiredEvent.PASSAGEM_E_HOSPEDAGEM)) {
+				// TODO: pacote
+			}
+
+			if (!interesse.getEventoDesejado().equals(EnumDesiredEvent.SOMENTE_HOSPEDAGEM)
+					|| !interesse.getDestino().equals(novaHospedagem.getCidade())
+					|| interesse.getNumeroQuartos().compareTo(novaHospedagem.getNumeroQuartos()) > 0
+					|| interesse.getNumeroPessoas().compareTo(novaHospedagem.getNumeroPessoas()) > 0) {
+				return;
+			}
+
+			try {
+				this.consultarHospedagens(
+						interesse.getDestino(), null, null, interesse.getNumeroQuartos(), interesse.getNumeroPessoas())
+						.stream()
+						.filter(hospedagem -> hospedagem.getId().equals(novaHospedagem.getId())
+								&& hospedagem.getValorTotal().compareTo(interesse.getPrecoMaximo()) <= 0)
+						.forEach(hospedagemNotificacao -> {
+							try {
+								interesse.getCliente().notificar(hospedagemNotificacao);
+							} catch (RemoteException e) {
+								e.printStackTrace();
+							}
+						});
+
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		});
+	}
 }

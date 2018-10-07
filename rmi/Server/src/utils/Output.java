@@ -19,6 +19,22 @@ public class Output {
 		System.out.println();
 	}
 
+	public static void imprimirPassagem(Airfare passagem) {
+		imprimir(DIVISOR);
+		imprimir("Código:\t\t" + passagem.getIda().getId().toString()
+				+ (passagem.getVolta() != null && passagem.getVolta().getId() != null
+						? "-" + passagem.getVolta().getId().toString()
+						: ""));
+		imprimir("Origem:\t\t" + passagem.getIda().getOrigem());
+		imprimir("Destino:\t" + passagem.getIda().getDestino());
+		imprimir("Data ida:\t" + passagem.getIda().getData());
+		imprimir("Data volta:\t"
+				+ (passagem.getVolta() != null && passagem.getVolta().getData() != null ? passagem.getVolta().getData()
+						: "-"));
+		imprimir("Nº passageiros:\t" + passagem.getNumeroPessoas());
+		imprimir("Valor total:\tR$ " + passagem.getValorTotal() + ",00");
+	}
+
 	public static void imprimirPassagens(List<Airfare> passagens) {
 		if (passagens.isEmpty()) {
 			imprimir("Nenhuma passagem encontrada");
@@ -26,19 +42,7 @@ public class Output {
 		}
 
 		for (Airfare passagem : passagens) {
-			imprimir(DIVISOR);
-			imprimir("Código:\t\t" + passagem.getIda().getId().toString()
-					+ (passagem.getVolta() != null && passagem.getVolta().getId() != null
-							? "-" + passagem.getVolta().getId().toString()
-							: ""));
-			imprimir("Origem:\t\t" + passagem.getIda().getOrigem());
-			imprimir("Destino:\t" + passagem.getIda().getDestino());
-			imprimir("Data ida:\t" + passagem.getIda().getData());
-			imprimir("Data volta:\t" + (passagem.getVolta() != null && passagem.getVolta().getData() != null
-					? passagem.getVolta().getData()
-					: "-"));
-			imprimir("Nº passageiros:\t" + passagem.getNumeroPessoas());
-			imprimir("Valor total:\tR$ " + passagem.getValorTotal() + ",00");
+			Output.imprimirPassagem(passagem);
 		}
 		imprimir(DIVISOR);
 	}
@@ -61,6 +65,24 @@ public class Output {
 		imprimir(DIVISOR);
 	}
 
+	public static void imprimirHospedagem(Accommodation hospedagem) {
+		imprimir(DIVISOR);
+		imprimir("Código:\t\t" + hospedagem.getId());
+		imprimir("Cidade:\t\t" + hospedagem.getCidade());
+		imprimir("Data entrada:\t" + hospedagem.getDataEntrada());
+		imprimir("Data saída:\t" + hospedagem.getDataSaida());
+		imprimir("Nº pessoas:\t" + hospedagem.getNumeroPessoas());
+		if (hospedagem.getValorTotal() == null) {
+			imprimir("Preço/pessoa:\tR$ " + hospedagem.getPrecoPorPessoa() + ",00");
+		}
+		imprimir("Nº quartos:\t" + hospedagem.getNumeroQuartos());
+		if (hospedagem.getValorTotal() == null) {
+			imprimir("Preço/quarto:\tR$ " + hospedagem.getPrecoPorQuarto() + ",00");
+		} else {
+			imprimir("Valor total:\tR$ " + hospedagem.getValorTotal() + ",00");
+		}
+	}
+
 	public static void imprimirHospedagens(List<Accommodation> hospedagens) {
 		if (hospedagens.isEmpty()) {
 			imprimir("Nenhuma hospedagem encontrada");
@@ -68,23 +90,22 @@ public class Output {
 		}
 
 		for (Accommodation hospedagem : hospedagens) {
-			imprimir(DIVISOR);
-			imprimir("Código:\t\t" + hospedagem.getId());
-			imprimir("Cidade:\t\t" + hospedagem.getCidade());
-			imprimir("Data entrada:\t" + hospedagem.getDataEntrada());
-			imprimir("Data saída:\t" + hospedagem.getDataSaida());
-			imprimir("Nº pessoas:\t" + hospedagem.getNumeroPessoas());
-			if (hospedagem.getValorTotal() == null) {
-				imprimir("Preço/pessoa:\tR$ " + hospedagem.getPrecoPorPessoa() + ",00");
-			}
-			imprimir("Nº quartos:\t" + hospedagem.getNumeroQuartos());
-			if (hospedagem.getValorTotal() == null) {
-				imprimir("Preço/quarto:\tR$ " + hospedagem.getPrecoPorQuarto() + ",00");
-			} else {
-				imprimir("Valor total:\tR$ " + hospedagem.getValorTotal() + ",00");
-			}
+			Output.imprimirHospedagem(hospedagem);
 		}
 		imprimir(DIVISOR);
+	}
+
+	public static void imprimirPacote(Package pacote) {
+		imprimir(DIVISOR);
+		imprimir("Código:\t\t" + pacote.getHospedagem().getId() + "-" + pacote.getPassagem().getIda().getId() + "-"
+				+ pacote.getPassagem().getVolta().getId());
+		imprimir("Origem:\t\t" + pacote.getPassagem().getIda().getOrigem());
+		imprimir("Destino:\t" + pacote.getPassagem().getIda().getDestino());
+		imprimir("Data ida:\t" + pacote.getPassagem().getIda().getData());
+		imprimir("Data volta:\t" + pacote.getPassagem().getVolta().getData());
+		imprimir("Nº pessoas:\t" + pacote.getHospedagem().getNumeroPessoas());
+		imprimir("Nº quartos:\t" + pacote.getHospedagem().getNumeroQuartos());
+		imprimir("Valor total:\tR$ " + pacote.getValorTotal() + ",00");
 	}
 
 	public static void imprimirPacotes(List<Package> pacotes) {
@@ -94,16 +115,7 @@ public class Output {
 		}
 
 		for (Package pacote : pacotes) {
-			imprimir(DIVISOR);
-			imprimir("Código:\t\t" + pacote.getHospedagem().getId() + "-" + pacote.getPassagem().getIda().getId() + "-"
-					+ pacote.getPassagem().getVolta().getId());
-			imprimir("Origem:\t\t" + pacote.getPassagem().getIda().getOrigem());
-			imprimir("Destino:\t" + pacote.getPassagem().getIda().getDestino());
-			imprimir("Data ida:\t" + pacote.getPassagem().getIda().getData());
-			imprimir("Data volta:\t" + pacote.getPassagem().getVolta().getData());
-			imprimir("Nº pessoas:\t" + pacote.getHospedagem().getNumeroPessoas());
-			imprimir("Nº quartos:\t" + pacote.getHospedagem().getNumeroQuartos());
-			imprimir("Valor total:\tR$ " + pacote.getValorTotal() + ",00");
+			Output.imprimirPacote(pacote);
 		}
 		imprimir(DIVISOR);
 	}
@@ -118,7 +130,12 @@ public class Output {
 			imprimir(DIVISOR);
 			imprimir("Código:\t\t" + interesse.getId().toString());
 			imprimir("Evento:\t\t" + interesse.getEventoDesejado().toString());
-			imprimir("Destino:\t" + interesse.getDestinoDesejado());
+			imprimir("Origem:\t" + interesse.getOrigem());
+			imprimir("Destino:\t" + interesse.getDestino());
+			imprimir("Nº pessoas:\t" + interesse.getNumeroPessoas());
+			if (interesse.getNumeroQuartos() != null) {
+				imprimir("Nº quartos:\t" + interesse.getNumeroQuartos());
+			}
 			imprimir("Preço máximo:\tR$ " + interesse.getPrecoMaximo() + ",00");
 		}
 		imprimir(DIVISOR);

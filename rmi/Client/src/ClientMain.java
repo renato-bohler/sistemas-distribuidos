@@ -269,8 +269,21 @@ public class ClientMain {
 						break;
 					}
 
+					Output.imprimirMesmaLinha("Informe a origem: ");
+					origem = scanner.nextLine();
+
 					Output.imprimirMesmaLinha("Informe o destino desejado: ");
 					destino = scanner.nextLine();
+
+					numeroQuartos = null;
+					if (EnumDesiredEvent.SOMENTE_HOSPEDAGEM.equals(eventoDesejado)
+							|| EnumDesiredEvent.PASSAGEM_E_HOSPEDAGEM.equals(eventoDesejado)) {
+						Output.imprimirMesmaLinha("Informe o número de quartos: ");
+						numeroQuartos = scanner.nextLong();
+					}
+
+					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
+					numeroPessoas = scanner.nextLong();
 
 					Output.imprimirMesmaLinha("Informe o preço máximo: ");
 					preco = scanner.nextLong();
@@ -278,7 +291,10 @@ public class ClientMain {
 					Interest interesseCadastro = new Interest();
 					interesseCadastro.setCliente(cliente);
 					interesseCadastro.setEventoDesejado(eventoDesejado);
-					interesseCadastro.setDestinoDesejado(destino);
+					interesseCadastro.setOrigem(origem);
+					interesseCadastro.setDestino(destino);
+					interesseCadastro.setNumeroQuartos(numeroQuartos);
+					interesseCadastro.setNumeroPessoas(numeroPessoas);
 					interesseCadastro.setPrecoMaximo(preco);
 
 					Output.imprimir(servidor.registrarInteresse(interesseCadastro));
