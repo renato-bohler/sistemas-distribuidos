@@ -5,6 +5,7 @@ import java.util.List;
 import resources.Accommodation;
 import resources.Airfare;
 import resources.Flight;
+import resources.Interest;
 import resources.Package;
 
 public class Output {
@@ -103,6 +104,22 @@ public class Output {
 			imprimir("Nº pessoas:\t" + pacote.getHospedagem().getNumeroPessoas());
 			imprimir("Nº quartos:\t" + pacote.getHospedagem().getNumeroQuartos());
 			imprimir("Valor total:\tR$ " + pacote.getValorTotal() + ",00");
+		}
+		imprimir(DIVISOR);
+	}
+
+	public static void imprimirInteresses(List<Interest> interesses) {
+		if (interesses.isEmpty()) {
+			imprimir("Nenhum interesse encontrado");
+			return;
+		}
+
+		for (Interest interesse : interesses) {
+			imprimir(DIVISOR);
+			imprimir("Código:\t\t" + interesse.getId().toString());
+			imprimir("Evento:\t\t" + interesse.getEventoDesejado().toString());
+			imprimir("Destino:\t" + interesse.getDestinoDesejado());
+			imprimir("Preço máximo:\tR$ " + interesse.getPrecoMaximo() + ",00");
 		}
 		imprimir(DIVISOR);
 	}

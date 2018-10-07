@@ -228,20 +228,29 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 	@Override
 	public List<Interest> consultarInteresses(Client referencia) throws RemoteException {
-		// TODO: implementar
-		return this.interesses;
+		return this.interesses.stream().filter(interesse -> interesse.getCliente().equals(referencia))
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public String registrarInteresse(Interest interesse) throws RemoteException {
-		// TODO: implementar
-		return "Ainda não implementado";
+		interesse.setId(sequence++);
+		this.interesses.add(interesse);
+		return "Interesse registrado com sucesso";
 	}
 
 	@Override
-	public String removerInteresse(Interest interesse) throws RemoteException {
-		// TODO: implementar
-		return "Ainda não implementado";
+	public String removerInteresse(Interest interesseArg) throws RemoteException {
+		Interest interesseCancelar = this.interesses.stream()
+				.filter(interesse -> interesse.getId().equals(interesseArg.getId())).findFirst().orElse(null);
+
+		if (interesseCancelar == null) {
+			return "Interesse não encontrado";
+		}
+
+		this.interesses.remove(interesseCancelar);
+
+		return "Interesse cancelado com sucesso";
 	}
 
 	@Override

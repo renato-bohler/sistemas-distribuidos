@@ -239,12 +239,12 @@ public class ClientMain {
 					break;
 				case 7:
 					// Consultar interesses
-					Output.imprimir(servidor.consultarInteresses(cliente).toString());
+					Output.imprimirInteresses(servidor.consultarInteresses(cliente));
 					break;
 				case 8:
 					// Registrar interesse
 					Output.imprimir();
-					Output.imprimir("| #\t| Evento\t\t\t\t|");
+					Output.imprimir("| #\t| Evento\t\t\t|");
 					Output.imprimir("| 1\t| Somente passagem\t\t|");
 					Output.imprimir("| 2\t| Somente hospedagem\t\t|");
 					Output.imprimir("| 3\t| Passagem e hospedagem\t\t|");
