@@ -47,8 +47,8 @@ public class ClientMain {
 				int opcao = scanner.nextInt();
 				scanner.nextLine();
 
-				String origem, destino, dataIda, dataVolta, dataEntrada, dataSaida;
-				Long numeroQuartos, numeroPessoas, codigo, preco;
+				String origem, destino, dataIda, dataVolta, dataEntrada, dataSaida, codigoPacote;
+				Long numeroQuartos, numeroPessoas, codigo, preco, codigoHospedagem, codigoIda, codigoVolta;
 
 				switch (opcao) {
 
@@ -100,8 +100,8 @@ public class ClientMain {
 
 					Airfare passagem = new Airfare();
 					if (codigoPassagem.contains("-")) {
-						Long codigoIda = Long.valueOf(codigoPassagem.split("-")[0]);
-						Long codigoVolta = Long.valueOf(codigoPassagem.split("-")[1]);
+						codigoIda = Long.valueOf(codigoPassagem.split("-")[0]);
+						codigoVolta = Long.valueOf(codigoPassagem.split("-")[1]);
 
 						Flight vooIda = new Flight();
 						vooIda.setId(codigoIda);
@@ -112,7 +112,7 @@ public class ClientMain {
 						passagem.setIda(vooIda);
 						passagem.setVolta(vooVolta);
 					} else {
-						Long codigoIda = Long.valueOf(codigoPassagem);
+						codigoIda = Long.valueOf(codigoPassagem);
 
 						Flight vooIda = new Flight();
 						vooIda.setId(codigoIda);
@@ -195,11 +195,45 @@ public class ClientMain {
 				case 6:
 					// Comprar pacote
 					Output.imprimirMesmaLinha("Informe o código do pacote: ");
-					codigo = scanner.nextLong();
+					codigoPacote = scanner.nextLine();
 
-					// TODO: recuperar os IDs da passagem e hospedagem
-					// correspondente
+					codigoHospedagem = null;
+					codigoIda = null;
+					codigoVolta = null;
+					try {
+						codigoHospedagem = Long.valueOf(codigoPacote.split("-")[0]);
+						codigoIda = Long.valueOf(codigoPacote.split("-")[1]);
+						codigoVolta = Long.valueOf(codigoPacote.split("-")[2]);
+					} catch (Exception e) {
+						Output.imprimir("Código inválido");
+						break;
+					}
+
+					Output.imprimirMesmaLinha("Informe o número de quartos: ");
+					numeroQuartos = scanner.nextLong();
+
+					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
+					numeroPessoas = scanner.nextLong();
+
+					Accommodation hospedagemPacote = new Accommodation();
+					hospedagemPacote.setId(codigoHospedagem);
+					hospedagemPacote.setNumeroPessoas(numeroPessoas);
+					hospedagemPacote.setNumeroQuartos(numeroQuartos);
+
+					Flight vooIdaPacote = new Flight();
+					vooIdaPacote.setId(codigoIda);
+
+					Flight vooVoltaPacote = new Flight();
+					vooVoltaPacote.setId(codigoVolta);
+
+					Airfare passagemPacote = new Airfare();
+					passagemPacote.setIda(vooIdaPacote);
+					passagemPacote.setVolta(vooVoltaPacote);
+					passagemPacote.setNumeroPessoas(numeroPessoas);
+
 					Package pacote = new Package();
+					pacote.setHospedagem(hospedagemPacote);
+					pacote.setPassagem(passagemPacote);
 
 					Output.imprimir(servidor.comprarPacote(pacote));
 					break;

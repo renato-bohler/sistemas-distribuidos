@@ -67,42 +67,49 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		})).collect(Collectors.toList());
 	}
 
+	private Flight pesquisaVoo(Long idVoo) {
+		return this.voos.stream().filter(voo -> voo.getId().equals(idVoo)).findFirst().orElse(null);
+	}
+
+	private Boolean vagasSuficientesVoo(Flight voo, Long numeroPessoas) {
+		return voo.getVagas().compareTo(numeroPessoas) >= 0;
+	}
+
+	private void descontaVagasVoo(Flight voo, Long numeroPessoas) {
+		voo.setVagas(voo.getVagas() - numeroPessoas);
+		if (voo.getVagas().equals(0L)) {
+			this.voos.remove(voo);
+		}
+	}
+
 	@Override
 	public String comprarPassagem(Airfare passagem) throws RemoteException {
-		Flight vooIda = this.voos.stream().filter(voo -> voo.getId().equals(passagem.getIda().getId())).findFirst()
-				.orElse(null);
+		Flight vooIda = this.pesquisaVoo(passagem.getIda().getId());
 
 		if (vooIda == null) {
 			return "Vôo de ida não encontrado";
 		}
 
-		if (vooIda.getVagas().compareTo(passagem.getNumeroPessoas()) < 0) {
+		if (!vagasSuficientesVoo(vooIda, passagem.getNumeroPessoas())) {
 			return "Vôo de ida não possui vagas suficientes";
 		}
 
 		Flight vooVolta = null;
 		if (passagem.getVolta() != null) {
-			vooVolta = this.voos.stream().filter(voo -> voo.getId().equals(passagem.getVolta().getId())).findFirst()
-					.orElse(null);
+			vooVolta = this.pesquisaVoo(passagem.getVolta().getId());
 
 			if (vooVolta == null) {
 				return "Vôo de volta não encontrado";
 			}
 
-			if (vooIda.getVagas().compareTo(passagem.getNumeroPessoas()) < 0) {
+			if (!vagasSuficientesVoo(vooVolta, passagem.getNumeroPessoas())) {
 				return "Vôo de volta não possui vagas suficientes";
 			}
 
-			vooVolta.setVagas(vooVolta.getVagas() - passagem.getNumeroPessoas());
-			if (vooVolta.getVagas().equals(0L)) {
-				this.voos.remove(vooVolta);
-			}
+			this.descontaVagasVoo(vooVolta, passagem.getNumeroPessoas());
 		}
 
-		vooIda.setVagas(vooIda.getVagas() - passagem.getNumeroPessoas());
-		if (vooIda.getVagas().equals(0L)) {
-			this.voos.remove(vooIda);
-		}
+		this.descontaVagasVoo(vooIda, passagem.getNumeroPessoas());
 
 		return "Passagem comprada com sucesso";
 	}
@@ -122,29 +129,45 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 				}).collect(Collectors.toList());
 	}
 
+	private Accommodation pesquisaHospedagem(Long idHospedagem) {
+		return this.hospedagens.stream().filter(hospedagem -> hospedagem.getId().equals(idHospedagem)).findFirst()
+				.orElse(null);
+	}
+
+	private Boolean quartosSuficientesHospedagem(Accommodation hospedagem, Long numeroQuartos) {
+		return hospedagem.getNumeroQuartos().compareTo(numeroQuartos) >= 0;
+	}
+
+	private Boolean vagasSuficientesHospedagem(Accommodation hospedagem, Long numeroPessoas) {
+		return hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0;
+	}
+
+	private void descontaVagasHospedagem(Accommodation hospedagem, Long numeroQuartos, Long numeroPessoas) {
+		hospedagem.setNumeroQuartos(hospedagem.getNumeroQuartos() - numeroQuartos);
+		hospedagem.setNumeroPessoas(hospedagem.getNumeroPessoas() - numeroPessoas);
+
+		if (hospedagem.getNumeroQuartos().equals(0L) || hospedagem.getNumeroPessoas().equals(0L)) {
+			this.hospedagens.remove(hospedagem);
+		}
+	}
+
 	@Override
-	public String comprarHospedagem(Accommodation hospedagemArg) throws RemoteException {
-		Accommodation hospedagemCompra = this.hospedagens.stream()
-				.filter(hospedagem -> hospedagem.getId().equals(hospedagemArg.getId())).findFirst().orElse(null);
+	public String comprarHospedagem(Accommodation hospedagem) throws RemoteException {
+		Accommodation hospedagemCompra = this.pesquisaHospedagem(hospedagem.getId());
 
 		if (hospedagemCompra == null) {
 			return "Hospedagem não encontrada";
 		}
 
-		if (hospedagemCompra.getNumeroQuartos().compareTo(hospedagemArg.getNumeroQuartos()) < 0) {
+		if (!this.quartosSuficientesHospedagem(hospedagemCompra, hospedagem.getNumeroQuartos())) {
 			return "Não existem quartos suficientes nesta hospedagem";
 		}
 
-		if (hospedagemCompra.getNumeroPessoas().compareTo(hospedagemArg.getNumeroPessoas()) < 0) {
+		if (!this.vagasSuficientesHospedagem(hospedagemCompra, hospedagem.getNumeroPessoas())) {
 			return "Não existem vagas suficientes nesta hospedagem";
 		}
 
-		hospedagemCompra.setNumeroQuartos(hospedagemCompra.getNumeroQuartos() - hospedagemArg.getNumeroQuartos());
-		hospedagemCompra.setNumeroPessoas(hospedagemCompra.getNumeroPessoas() - hospedagemArg.getNumeroPessoas());
-
-		if (hospedagemCompra.getNumeroQuartos().equals(0L) || hospedagemCompra.getNumeroPessoas().equals(0L)) {
-			this.hospedagens.remove(hospedagemCompra);
-		}
+		this.descontaVagasHospedagem(hospedagemCompra, hospedagem.getNumeroQuartos(), hospedagem.getNumeroPessoas());
 
 		return "Hospedagem comprada com sucesso";
 	}
@@ -168,8 +191,39 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 	@Override
 	public String comprarPacote(Package pacote) throws RemoteException {
-		// TODO: implementar
-		return "Ainda não implementado";
+		Airfare passagem = pacote.getPassagem();
+		Accommodation hospedagem = pacote.getHospedagem();
+
+		// Passagem
+		Flight vooIda = this.pesquisaVoo(passagem.getIda().getId());
+		Flight vooVolta = this.pesquisaVoo(passagem.getVolta().getId());
+
+		if (vooIda == null || vooVolta == null) {
+			return "Vôo de ida e/ou volta não encontrados";
+		}
+
+		if (!vagasSuficientesVoo(vooIda, passagem.getNumeroPessoas())
+				|| !vagasSuficientesVoo(vooVolta, passagem.getNumeroPessoas())) {
+			return "Vôo de ida e/ou volta não possuem vagas suficientes";
+		}
+
+		// Hospedagem
+		Accommodation hospedagemPacote = this.pesquisaHospedagem(hospedagem.getId());
+
+		if (hospedagemPacote == null) {
+			return "Hospedagem não encontrada";
+		}
+
+		if (!this.quartosSuficientesHospedagem(hospedagemPacote, hospedagem.getNumeroQuartos())
+				|| !this.vagasSuficientesHospedagem(hospedagemPacote, hospedagem.getNumeroPessoas())) {
+			return "Não existem quartou e/ou vagas suficientes nesta hospedagem";
+		}
+
+		this.descontaVagasVoo(vooVolta, passagem.getNumeroPessoas());
+		this.descontaVagasVoo(vooIda, passagem.getNumeroPessoas());
+		this.descontaVagasHospedagem(hospedagemPacote, hospedagem.getNumeroQuartos(), hospedagem.getNumeroPessoas());
+
+		return "Pacote comprado com sucesso";
 	}
 
 	@Override

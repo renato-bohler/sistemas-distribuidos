@@ -74,11 +74,11 @@ public class Output {
 			imprimir("Data saída:\t" + hospedagem.getDataSaida());
 			imprimir("Nº pessoas:\t" + hospedagem.getNumeroPessoas());
 			if (hospedagem.getValorTotal() == null) {
-				imprimir("Preço por pessoa:\tR$ " + hospedagem.getPrecoPorPessoa() + ",00");
+				imprimir("Preço/pessoa:\tR$ " + hospedagem.getPrecoPorPessoa() + ",00");
 			}
 			imprimir("Nº quartos:\t" + hospedagem.getNumeroQuartos());
 			if (hospedagem.getValorTotal() == null) {
-				imprimir("Preço por quarto:\tR$ " + hospedagem.getPrecoPorQuarto() + ",00");
+				imprimir("Preço/quarto:\tR$ " + hospedagem.getPrecoPorQuarto() + ",00");
 			} else {
 				imprimir("Valor total:\tR$ " + hospedagem.getValorTotal() + ",00");
 			}
