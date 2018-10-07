@@ -95,7 +95,7 @@ public class ClientMain {
 					break;
 				case 2:
 					// Comprar passagem
-					Output.imprimirMesmaLinha("Informe o código da passagem: ");
+					Output.imprimirMesmaLinha("Informe o código: ");
 					String codigoPassagem = scanner.nextLine();
 
 					Airfare passagem = new Airfare();
@@ -152,7 +152,7 @@ public class ClientMain {
 					break;
 				case 4:
 					// Comprar hospedagem
-					Output.imprimirMesmaLinha("Informe o código da passagem: ");
+					Output.imprimirMesmaLinha("Informe o código: ");
 					codigo = scanner.nextLong();
 
 					Output.imprimirMesmaLinha("Informe o número de quartos: ");
@@ -194,7 +194,7 @@ public class ClientMain {
 					break;
 				case 6:
 					// Comprar pacote
-					Output.imprimirMesmaLinha("Informe o código do pacote: ");
+					Output.imprimirMesmaLinha("Informe o código: ");
 					codigoPacote = scanner.nextLine();
 
 					codigoHospedagem = null;

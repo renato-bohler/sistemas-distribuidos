@@ -130,7 +130,7 @@ public class Output {
 			imprimir(DIVISOR);
 			imprimir("Código:\t\t" + interesse.getId().toString());
 			imprimir("Evento:\t\t" + interesse.getEventoDesejado().toString());
-			imprimir("Origem:\t" + interesse.getOrigem());
+			imprimir("Origem:\t\t" + interesse.getOrigem());
 			imprimir("Destino:\t" + interesse.getDestino());
 			imprimir("Nº pessoas:\t" + interesse.getNumeroPessoas());
 			if (interesse.getNumeroQuartos() != null) {
