@@ -26,6 +26,11 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	// Sequência global de IDs para persistência
 	private Long sequence;
 
+	/**
+	 * Construtor do servidor
+	 *
+	 * @throws RemoteException
+	 */
 	public ServerImplementation() throws RemoteException {
 		super();
 
@@ -36,6 +41,17 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		this.sequence = 1L;
 	}
 
+	/**
+	 * Consulta as passagens disponíveis de acordo com os filtros
+	 * 
+	 * @param origem {@link String}
+	 * @param destino {@link String}
+	 * @param dataIda {@link String}
+	 * @param dataVolta {@link String}
+	 * @param numeroPessoas {@link Long}
+	 * @return {@link List}<{@link Airfare}>
+	 * @throws RemoteException
+	 */
 	@Override
 	public List<Airfare> consultarPassagens(String origem, String destino, String dataIda, String dataVolta,
 			Long numeroPessoas) throws RemoteException {
@@ -74,6 +90,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		})).collect(Collectors.toList());
 	}
 
+	/**
+	 * Compra uma passagem
+	 * 
+	 * @param passagem
+	 * @return {@link String}
+	 * @throws RemoteException
+	 */
 	@Override
 	public String comprarPassagem(Airfare passagem) throws RemoteException {
 		Flight vooIda = this.pesquisaVoo(passagem.getIda().getId());
@@ -106,6 +129,17 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		return "Passagem comprada com sucesso";
 	}
 
+	/**
+	 * Consulta as hospedagens disponíveis de acordo com os filtros
+	 * 
+	 * @param destino {@link String}
+	 * @param dataEntrada {@link String}
+	 * @param dataSaida {@link String}
+	 * @param numeroQuartos {@link Long}
+	 * @param numeroPessoas {@link Long}
+	 * @return {@link List}<{@link Accommodation}>
+	 * @throws RemoteException
+	 */
 	@Override
 	public List<Accommodation> consultarHospedagens(String destino, String dataEntrada, String dataSaida,
 			Long numeroQuartos, Long numeroPessoas) throws RemoteException {
@@ -125,6 +159,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 				}).collect(Collectors.toList());
 	}
 
+	/**
+	 * Compra uma hospedagem
+	 * 
+	 * @param hospedagem {@link Accommodation}
+	 * @return {@link String}
+	 * @throws RemoteException
+	 */
 	@Override
 	public String comprarHospedagem(Accommodation hospedagem) throws RemoteException {
 		Accommodation hospedagemCompra = this.pesquisaHospedagem(hospedagem.getId());
@@ -146,6 +187,18 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		return "Hospedagem comprada com sucesso";
 	}
 
+	/**
+	 * Consulta os pacotes disponíveis de acordo com os filtros
+	 * 
+	 * @param origem {@link String}
+	 * @param destino {@link String}
+	 * @param dataIda {@link String}
+	 * @param dataVolta {@link String}
+	 * @param numeroQuartos {@link Long}
+	 * @param numeroPessoas {@link Long}
+	 * @return {@link List}<{@link Package}>
+	 * @throws RemoteException
+	 */
 	@Override
 	public List<Package> consultarPacotes(String origem, String destino, String dataIda, String dataVolta,
 			Long numeroQuartos, Long numeroPessoas) throws RemoteException {
@@ -166,6 +219,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		})).collect(Collectors.toList());
 	}
 
+	/**
+	 * Compra um pacote
+	 * 
+	 * @param pacote {@link Package}
+	 * @return {@link String}
+	 * @throws RemoteException
+	 */
 	@Override
 	public String comprarPacote(Package pacote) throws RemoteException {
 		Airfare passagem = pacote.getPassagem();
@@ -203,6 +263,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		return "Pacote comprado com sucesso";
 	}
 
+	/**
+	 * Consulta os interesses de um dado cliente
+	 * 
+	 * @param referencia {@link Client}
+	 * @return {@link List}<{@link Interest}>
+	 * @throws RemoteException
+	 */
 	@Override
 	public List<Interest> consultarInteresses(Client referencia) throws RemoteException {
 		// Busca os interesses de um cliente pela sua referência
@@ -210,6 +277,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Registra interesse em um evento
+	 * 
+	 * @param interesse {@link Interest}
+	 * @return {@link String}
+	 * @throws RemoteException
+	 */
 	@Override
 	public String registrarInteresse(Interest interesse) throws RemoteException {
 		interesse.setId(sequence++);
@@ -217,6 +291,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		return "Interesse registrado com sucesso";
 	}
 
+	/**
+	 * Remove o interesse de um evento
+	 * 
+	 * @param interesse {@link Interest}
+	 * @return {@link String}
+	 * @throws RemoteException
+	 */
 	@Override
 	public String removerInteresse(Interest interesseArg) throws RemoteException {
 		// Busca o interesse a ser removido pelo seu ID
@@ -232,11 +313,24 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		return "Interesse cancelado com sucesso";
 	}
 
+	/**
+	 * Consulta todos os vôos cadastrados
+	 *
+	 * @return {@link List}<{@link Flight}>
+	 * @throws RemoteException
+	 */
 	@Override
 	public List<Flight> consultarVoos() throws RemoteException {
 		return this.voos;
 	}
 
+	/**
+	 * Cadastra um vôo
+	 * 
+	 * @param voo {@link Flight}
+	 * @return {@link String}
+	 * @throws RemoteException
+	 */
 	@Override
 	public String cadastrarVoo(Flight voo) throws RemoteException {
 		voo.setId(sequence++);
@@ -245,6 +339,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		return "Vôo cadastrado com sucesso";
 	}
 
+	/**
+	 * Remove um vôo
+	 * 
+	 * @param voo {@link Flight}
+	 * @return {@link String}
+	 * @throws RemoteException
+	 */
 	@Override
 	public String removerVoo(Flight vooArg) throws RemoteException {
 		// Busca o vôo a ser removido pelo seu ID
@@ -260,11 +361,24 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		return "Vôo removido com sucesso";
 	}
 
+	/**
+	 * Consulta todas as hospedagens cadastradas
+	 * 
+	 * @return {@link List}<{@link Accommodation}>
+	 * @throws RemoteException
+	 */
 	@Override
 	public List<Accommodation> consultarHospedagens() throws RemoteException {
 		return this.hospedagens;
 	}
 
+	/**
+	 * Cadastra uma hospedagem
+	 * 
+	 * @param hospedagem {@link Accommodation}
+	 * @return {@link String}
+	 * @throws RemoteException
+	 */
 	@Override
 	public String cadastrarHospedagem(Accommodation hospedagem) throws RemoteException {
 		hospedagem.setId(sequence++);
@@ -273,6 +387,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		return "Hospedagem cadastrada com sucesso";
 	}
 
+	/**
+	 * Remove uma hospedagem
+	 * 
+	 * @param hospedagem {@link Accommodation}
+	 * @return {@link String}
+	 * @throws RemoteException
+	 */
 	@Override
 	public String removerHospedagem(Accommodation hospedagemArg) throws RemoteException {
 		// Busca a hospedagem a ser removida pelo seu ID
@@ -292,14 +413,34 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	 * MÉTODOS AUXILIARES
 	 */
 
+
+	/**
+	 * Pesquisa um vôo pelo seu ID
+	 * 
+	 * @param idVoo {@link Long}
+	 * @return {@link Flight}
+	 */
 	private Flight pesquisaVoo(Long idVoo) {
 		return this.voos.stream().filter(voo -> voo.getId().equals(idVoo)).findFirst().orElse(null);
 	}
 
+	/**
+	 * Valida se um vôo tem vagas suficientes
+	 *
+	 * @param voo {@link Flight}
+	 * @param numeroPessoas {@link Long}
+	 * @return {@link Boolean}
+	 */
 	private Boolean vagasSuficientesVoo(Flight voo, Long numeroPessoas) {
 		return voo.getVagas().compareTo(numeroPessoas) >= 0;
 	}
 
+	/**
+	 * Desconta as vagas de um vôo
+	 *
+	 * @param voo {@link Flight}
+	 * @param numeroPessoas {@link Long}
+	 */
 	private void descontaVagasVoo(Flight voo, Long numeroPessoas) {
 		voo.setVagas(voo.getVagas() - numeroPessoas);
 		if (voo.getVagas().equals(0L)) {
@@ -307,19 +448,46 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		}
 	}
 
+	/**
+	 * Pesquisa uma hospedagem pelo seu ID
+	 * 
+	 * @param idHospedagem {@link Long}
+	 * @return {@link Accommodation}
+	 */
 	private Accommodation pesquisaHospedagem(Long idHospedagem) {
 		return this.hospedagens.stream().filter(hospedagem -> hospedagem.getId().equals(idHospedagem)).findFirst()
 				.orElse(null);
 	}
 
+	/**
+	 * Valida se uma hospedagem tem quartos suficientes
+	 *
+	 * @param hospedagem {@link Accommodation}
+	 * @param numeroQuartos {@link Long}
+	 * @return {@link Boolean}
+	 */
 	private Boolean quartosSuficientesHospedagem(Accommodation hospedagem, Long numeroQuartos) {
 		return hospedagem.getNumeroQuartos().compareTo(numeroQuartos) >= 0;
 	}
 
+	/**
+	 * Valida se uma hospedagem tem vagas suficientes
+	 *
+	 * @param hospedagem {@link Accommodation}
+	 * @param numeroPessoas {@link Long}
+	 * @return {@link Boolean}
+	 */
 	private Boolean vagasSuficientesHospedagem(Accommodation hospedagem, Long numeroPessoas) {
 		return hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0;
 	}
 
+	/**
+	 * Desconta as vagas de uma hospedagem
+	 *
+	 * @param hospedagem {@link Accommodation}
+	 * @param numeroQuartos {@link Long}
+	 * @param numeroPessoas {@link Long}
+	 */
 	private void descontaVagasHospedagem(Accommodation hospedagem, Long numeroQuartos, Long numeroPessoas) {
 		hospedagem.setNumeroQuartos(hospedagem.getNumeroQuartos() - numeroQuartos);
 		hospedagem.setNumeroPessoas(hospedagem.getNumeroPessoas() - numeroPessoas);
@@ -329,6 +497,11 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		}
 	}
 
+	/**
+	 * Notifica o cadastro de um novo vôo para todos interessados
+	 *
+	 * @param novoVoo {@link Flight}
+	 */
 	private void notificarCadastroVoo(Flight novoVoo) {
 		// Para cada interesse cadastrado
 		this.interesses.forEach(interesse -> {
@@ -369,6 +542,11 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		});
 	}
 
+	/**
+	 * Notifica o cadastro de uma nova hospedagem para todos interessados
+	 *
+	 * @param novaHospedagem {@link Accommodation}
+	 */
 	private void notificarCadastroHospedagem(Accommodation novaHospedagem) {
 		// Para cada interesse cadastrado
 		this.interesses.forEach(interesse -> {
