@@ -74,21 +74,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		})).collect(Collectors.toList());
 	}
 
-	private Flight pesquisaVoo(Long idVoo) {
-		return this.voos.stream().filter(voo -> voo.getId().equals(idVoo)).findFirst().orElse(null);
-	}
-
-	private Boolean vagasSuficientesVoo(Flight voo, Long numeroPessoas) {
-		return voo.getVagas().compareTo(numeroPessoas) >= 0;
-	}
-
-	private void descontaVagasVoo(Flight voo, Long numeroPessoas) {
-		voo.setVagas(voo.getVagas() - numeroPessoas);
-		if (voo.getVagas().equals(0L)) {
-			this.voos.remove(voo);
-		}
-	}
-
 	@Override
 	public String comprarPassagem(Airfare passagem) throws RemoteException {
 		Flight vooIda = this.pesquisaVoo(passagem.getIda().getId());
@@ -138,28 +123,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 							+ hospedagem.getPrecoPorPessoa() * numeroPessoas);
 					return hospedagem;
 				}).collect(Collectors.toList());
-	}
-
-	private Accommodation pesquisaHospedagem(Long idHospedagem) {
-		return this.hospedagens.stream().filter(hospedagem -> hospedagem.getId().equals(idHospedagem)).findFirst()
-				.orElse(null);
-	}
-
-	private Boolean quartosSuficientesHospedagem(Accommodation hospedagem, Long numeroQuartos) {
-		return hospedagem.getNumeroQuartos().compareTo(numeroQuartos) >= 0;
-	}
-
-	private Boolean vagasSuficientesHospedagem(Accommodation hospedagem, Long numeroPessoas) {
-		return hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0;
-	}
-
-	private void descontaVagasHospedagem(Accommodation hospedagem, Long numeroQuartos, Long numeroPessoas) {
-		hospedagem.setNumeroQuartos(hospedagem.getNumeroQuartos() - numeroQuartos);
-		hospedagem.setNumeroPessoas(hospedagem.getNumeroPessoas() - numeroPessoas);
-
-		if (hospedagem.getNumeroQuartos().equals(0L) || hospedagem.getNumeroPessoas().equals(0L)) {
-			this.hospedagens.remove(hospedagem);
-		}
 	}
 
 	@Override
@@ -325,6 +288,47 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		return "Hospedagem removida com sucesso";
 	}
 
+	/*
+	 * MÉTODOS AUXILIARES
+	 */
+
+	private Flight pesquisaVoo(Long idVoo) {
+		return this.voos.stream().filter(voo -> voo.getId().equals(idVoo)).findFirst().orElse(null);
+	}
+
+	private Boolean vagasSuficientesVoo(Flight voo, Long numeroPessoas) {
+		return voo.getVagas().compareTo(numeroPessoas) >= 0;
+	}
+
+	private void descontaVagasVoo(Flight voo, Long numeroPessoas) {
+		voo.setVagas(voo.getVagas() - numeroPessoas);
+		if (voo.getVagas().equals(0L)) {
+			this.voos.remove(voo);
+		}
+	}
+
+	private Accommodation pesquisaHospedagem(Long idHospedagem) {
+		return this.hospedagens.stream().filter(hospedagem -> hospedagem.getId().equals(idHospedagem)).findFirst()
+				.orElse(null);
+	}
+
+	private Boolean quartosSuficientesHospedagem(Accommodation hospedagem, Long numeroQuartos) {
+		return hospedagem.getNumeroQuartos().compareTo(numeroQuartos) >= 0;
+	}
+
+	private Boolean vagasSuficientesHospedagem(Accommodation hospedagem, Long numeroPessoas) {
+		return hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0;
+	}
+
+	private void descontaVagasHospedagem(Accommodation hospedagem, Long numeroQuartos, Long numeroPessoas) {
+		hospedagem.setNumeroQuartos(hospedagem.getNumeroQuartos() - numeroQuartos);
+		hospedagem.setNumeroPessoas(hospedagem.getNumeroPessoas() - numeroPessoas);
+
+		if (hospedagem.getNumeroQuartos().equals(0L) || hospedagem.getNumeroPessoas().equals(0L)) {
+			this.hospedagens.remove(hospedagem);
+		}
+	}
+
 	private void notificarCadastroVoo(Flight novoVoo) {
 		// Para cada interesse cadastrado
 		this.interesses.forEach(interesse -> {
@@ -403,4 +407,5 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 			}
 		});
 	}
+
 }
