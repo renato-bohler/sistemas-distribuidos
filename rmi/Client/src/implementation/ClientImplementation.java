@@ -32,7 +32,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
 
 	@Override
 	public void notificar(Accommodation novaHospedagem) throws RemoteException {
-		// Output.imprimir();
+		Output.imprimir();
 		Output.imprimir("*** Nova hospedagem de seu interesse ***");
 		Output.imprimirHospedagem(novaHospedagem);
 		Output.imprimir();
@@ -40,7 +40,7 @@ public class ClientImplementation extends UnicastRemoteObject implements Client 
 
 	@Override
 	public void notificar(Package novoPacote) throws RemoteException {
-		// Output.imprimir();
+		Output.imprimir();
 		Output.imprimir("*** Novo pacote de seu interesse ***");
 		Output.imprimirPacote(novoPacote);
 		Output.imprimir();

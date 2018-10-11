@@ -18,10 +18,12 @@ import rmi.Server;
 public class ServerImplementation extends UnicastRemoteObject implements Server {
 	private static final long serialVersionUID = 1L;
 
+	// Persistência
 	private List<Flight> voos;
 	private List<Accommodation> hospedagens;
 	private List<Interest> interesses;
 
+	// Sequência global de IDs para persistência
 	private Long sequence;
 
 	public ServerImplementation() throws RemoteException {
@@ -37,6 +39,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	@Override
 	public List<Airfare> consultarPassagens(String origem, String destino, String dataIda, String dataVolta,
 			Long numeroPessoas) throws RemoteException {
+		// Busca os vôos compatíveis para ida
 		List<Flight> voosCompativeisIda = this.voos.stream()
 				.filter(voo -> voo.getOrigem().equals(origem) && voo.getDestino().equals(destino)
 						&& (dataIda == null || voo.getData().equals(dataIda))
@@ -44,6 +47,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 				.collect(Collectors.toList());
 
 		if (dataVolta == null) {
+			// Caso seja somente ida, retorna as passagens de ida correspondentes
 			return voosCompativeisIda.stream().map(vooIda -> {
 				Airfare passagemIda = new Airfare();
 				passagemIda.setIda(vooIda);
@@ -53,12 +57,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 			}).collect(Collectors.toList());
 		}
 
+		// Busca os vôos compatíveis para volta
 		List<Flight> voosCompativeisVolta = this.voos.stream()
 				.filter(voo -> voo.getOrigem().equals(destino) && voo.getDestino().equals(origem)
 						&& voo.getData().equals(dataVolta) && voo.getVagas().compareTo(numeroPessoas) >= 0)
 				.collect(Collectors.toList());
 
-		// Cross join voosCompativeisIda x voosCompativeisVolta
+		// As passagens compatíveis de ida e volta são um cross join entre voosCompativeisIda e voosCompativeisVolta
 		return voosCompativeisIda.stream().flatMap(vooIda -> voosCompativeisVolta.stream().map(vooVolta -> {
 			Airfare passagemIdaVolta = new Airfare();
 			passagemIdaVolta.setIda(vooIda);
@@ -119,6 +124,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	@Override
 	public List<Accommodation> consultarHospedagens(String destino, String dataEntrada, String dataSaida,
 			Long numeroQuartos, Long numeroPessoas) throws RemoteException {
+		// Busca as hospedagens compatíveis
 		return this.hospedagens.stream()
 				.filter(hospedagem -> hospedagem.getCidade().equals(destino)
 						&& (dataEntrada == null || hospedagem.getDataEntrada().equals(dataEntrada))
@@ -180,11 +186,14 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	@Override
 	public List<Package> consultarPacotes(String origem, String destino, String dataIda, String dataVolta,
 			Long numeroQuartos, Long numeroPessoas) throws RemoteException {
+		// Consulta todas as passagens de ida e volta compatíveis
 		List<Airfare> passagensIdaEVolta = this.consultarPassagens(origem, destino, dataIda, dataVolta, numeroPessoas);
+
+		// Consulta todas as hospedagens compatíveis
 		List<Accommodation> hospedagens = this.consultarHospedagens(destino, dataIda, dataVolta, numeroQuartos,
 				numeroPessoas);
 
-		// Cross join passagensIdaEVolta x hospedagens
+		// As passagens compatíveis de ida e volta são um cross join entre passagensIdaEVolta e hospedagens
 		return passagensIdaEVolta.stream().flatMap(passagem -> hospedagens.stream().map(hospedagem -> {
 			Package pacote = new Package();
 			pacote.setPassagem(passagem);
@@ -233,6 +242,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 	@Override
 	public List<Interest> consultarInteresses(Client referencia) throws RemoteException {
+		// Busca os interesses de um cliente pela sua referência
 		return this.interesses.stream().filter(interesse -> interesse.getCliente().equals(referencia))
 				.collect(Collectors.toList());
 	}
@@ -246,6 +256,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 	@Override
 	public String removerInteresse(Interest interesseArg) throws RemoteException {
+		// Busca o interesse a ser removido pelo seu ID
 		Interest interesseCancelar = this.interesses.stream()
 				.filter(interesse -> interesse.getId().equals(interesseArg.getId())).findFirst().orElse(null);
 
@@ -273,6 +284,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 	@Override
 	public String removerVoo(Flight vooArg) throws RemoteException {
+		// Busca o vôo a ser removido pelo seu ID
 		Flight vooRemover = this.voos.stream().filter(voo -> voo.getId().equals(vooArg.getId())).findFirst()
 				.orElse(null);
 
@@ -300,6 +312,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 	@Override
 	public String removerHospedagem(Accommodation hospedagemArg) throws RemoteException {
+		// Busca a hospedagem a ser removida pelo seu ID
 		Accommodation hospedagemRemover = this.hospedagens.stream()
 				.filter(hospedagem -> hospedagem.getId().equals(hospedagemArg.getId())).findFirst().orElse(null);
 
@@ -313,11 +326,14 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	}
 
 	private void notificarCadastroVoo(Flight novoVoo) {
+		// Para cada interesse cadastrado
 		this.interesses.forEach(interesse -> {
+			// Se for um interesse em pacotes, trata de maneira específica
 			if (interesse.getEventoDesejado().equals(EnumDesiredEvent.PASSAGEM_E_HOSPEDAGEM)) {
 				// TODO: pacote
 			}
 
+			// Caso o interesse não seja compatível, não notifica
 			if (!interesse.getEventoDesejado().equals(EnumDesiredEvent.SOMENTE_PASSAGEM)
 					|| !interesse.getOrigem().equals(novoVoo.getOrigem())
 					|| !interesse.getDestino().equals(novoVoo.getDestino())
@@ -326,6 +342,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 			}
 
 			try {
+				// Para todos interesses compatíveis
+				// 	- consulta todas as passagens cujo valor total é menor ou igual ao preço máximo
+				//  - para cada uma destas, notifica o cliente correspondente
 				this.consultarPassagens(
 						interesse.getOrigem(), interesse.getDestino(), null, null, interesse.getNumeroPessoas())
 						.stream()
@@ -347,11 +366,14 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	}
 
 	private void notificarCadastroHospedagem(Accommodation novaHospedagem) {
+		// Para cada interesse cadastrado
 		this.interesses.forEach(interesse -> {
+			// Se for um interesse em pacotes, trata de maneira específica
 			if (interesse.getEventoDesejado().equals(EnumDesiredEvent.PASSAGEM_E_HOSPEDAGEM)) {
 				// TODO: pacote
 			}
 
+			// Caso o interesse não seja compatível, não notifica
 			if (!interesse.getEventoDesejado().equals(EnumDesiredEvent.SOMENTE_HOSPEDAGEM)
 					|| !interesse.getDestino().equals(novaHospedagem.getCidade())
 					|| interesse.getNumeroQuartos().compareTo(novaHospedagem.getNumeroQuartos()) > 0
@@ -360,6 +382,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 			}
 
 			try {
+				// Para todos interesses compatíveis
+				// 	- consulta todas as hospedagens cujo valor total é menor ou igual ao preço máximo
+				//  - para cada uma destas, notifica o cliente correspondente
 				this.consultarHospedagens(
 						interesse.getDestino(), null, null, interesse.getNumeroQuartos(), interesse.getNumeroPessoas())
 						.stream()
