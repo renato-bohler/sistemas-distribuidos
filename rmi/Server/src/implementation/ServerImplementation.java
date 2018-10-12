@@ -101,7 +101,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	 * @throws RemoteException
 	 */
 	@Override
-	public String comprarPassagem(Airfare passagem) throws RemoteException {
+	public synchronized String comprarPassagem(Airfare passagem) throws RemoteException {
 		Flight vooIda = this.pesquisaVoo(passagem.getIda().getId());
 
 		if (vooIda == null) {
@@ -168,7 +168,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	 * @throws RemoteException
 	 */
 	@Override
-	public String comprarHospedagem(Accommodation hospedagem) throws RemoteException {
+	public synchronized String comprarHospedagem(Accommodation hospedagem) throws RemoteException {
 		Accommodation hospedagemCompra = this.pesquisaHospedagem(hospedagem.getId());
 
 		if (hospedagemCompra == null) {
@@ -229,7 +229,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	 * @throws RemoteException
 	 */
 	@Override
-	public String comprarPacote(Package pacote) throws RemoteException {
+	public synchronized String comprarPacote(Package pacote) throws RemoteException {
 		Airfare passagem = pacote.getPassagem();
 		Accommodation hospedagem = pacote.getHospedagem();
 
