@@ -44,8 +44,13 @@ public class ClientMain {
 				Output.imprimir();
 				Output.imprimirMesmaLinha("Selecione uma opção: ");
 
-				int opcao = scanner.nextInt();
-				scanner.nextLine();
+				Integer opcao;
+				try {
+					opcao = new Integer(scanner.nextLine());
+				} catch (NumberFormatException e) {
+					Output.imprimir("Opção inválida");
+					continue;
+				}
 
 				String origem, destino, dataIda, dataVolta, dataEntrada, dataSaida, codigoPacote;
 				Long numeroQuartos, numeroPessoas, codigo, preco, codigoHospedagem, codigoIda, codigoVolta;
@@ -87,6 +92,7 @@ public class ClientMain {
 
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
+					scanner.nextLine();
 
 					Output.imprimir();
 					Output.imprimirPassagens(
@@ -145,6 +151,7 @@ public class ClientMain {
 
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
+					scanner.nextLine();
 
 					Output.imprimir();
 					Output.imprimirHospedagens(servidor.consultarHospedagens(destino, dataEntrada, dataSaida,
@@ -160,6 +167,7 @@ public class ClientMain {
 
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
+					scanner.nextLine();
 
 					Accommodation hospedagem = new Accommodation();
 					hospedagem.setId(codigo);
@@ -187,6 +195,7 @@ public class ClientMain {
 
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
+					scanner.nextLine();
 
 					Output.imprimir();
 					Output.imprimirPacotes(servidor.consultarPacotes(origem, destino, dataIda, dataVolta, numeroQuartos,
@@ -214,6 +223,7 @@ public class ClientMain {
 
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
+					scanner.nextLine();
 
 					Accommodation hospedagemPacote = new Accommodation();
 					hospedagemPacote.setId(codigoHospedagem);
@@ -287,6 +297,7 @@ public class ClientMain {
 
 					Output.imprimirMesmaLinha("Informe o preço máximo: ");
 					preco = scanner.nextLong();
+					scanner.nextLine();
 
 					Interest interesseCadastro = new Interest();
 					interesseCadastro.setCliente(cliente);
@@ -303,6 +314,7 @@ public class ClientMain {
 					// Cancelar interesse
 					Output.imprimirMesmaLinha("Informe o código do interesse: ");
 					codigo = scanner.nextLong();
+					scanner.nextLine();
 
 					Interest interesseCancelamento = new Interest();
 					interesseCancelamento.setId(codigo);
@@ -310,6 +322,7 @@ public class ClientMain {
 					Output.imprimir(servidor.removerInteresse(interesseCancelamento));
 					break;
 				default:
+					Output.imprimir("Opção inválida");
 					break;
 				}
 			}

@@ -41,8 +41,13 @@ public class ServerMain {
 				Output.imprimir();
 				Output.imprimirMesmaLinha("Selecione uma opção: ");
 
-				int opcao = scanner.nextInt();
-				scanner.nextLine();
+				Integer opcao;
+				try {
+					opcao = new Integer(scanner.nextLine());
+				} catch (NumberFormatException e) {
+					Output.imprimir("Opção inválida");
+					continue;
+				}
 
 				String origem, destino, cidade, data, dataEntrada, dataSaida;
 				Long codigo, numeroVagas, numeroQuartos, numeroPessoas, preco, precoPorQuarto, precoPorPessoa;
@@ -69,6 +74,7 @@ public class ServerMain {
 
 					Output.imprimirMesmaLinha("Informe o preço de passagem unitário: ");
 					preco = scanner.nextLong();
+					scanner.nextLine();
 
 					Flight vooCadastro = new Flight();
 					vooCadastro.setOrigem(origem);
@@ -83,6 +89,7 @@ public class ServerMain {
 					// Remover vôo
 					Output.imprimirMesmaLinha("Informe o código: ");
 					codigo = scanner.nextLong();
+					scanner.nextLine();
 
 					Flight vooRemover = new Flight();
 					vooRemover.setId(codigo);
@@ -116,6 +123,7 @@ public class ServerMain {
 
 					Output.imprimirMesmaLinha("Informe o preço por pessoa: ");
 					precoPorPessoa = scanner.nextLong();
+					scanner.nextLine();
 
 					Accommodation hospedagemCadastro = new Accommodation();
 					hospedagemCadastro.setCidade(cidade);
@@ -132,6 +140,7 @@ public class ServerMain {
 					// Remover hospedagem
 					Output.imprimirMesmaLinha("Informe o código: ");
 					codigo = scanner.nextLong();
+					scanner.nextLine();
 
 					Accommodation hospedagemRemover = new Accommodation();
 					hospedagemRemover.setId(codigo);
@@ -139,6 +148,7 @@ public class ServerMain {
 					Output.imprimir(servidor.removerHospedagem(hospedagemRemover));
 					break;
 				default:
+					Output.imprimir("Opção inválida");
 					break;
 				}
 			}
