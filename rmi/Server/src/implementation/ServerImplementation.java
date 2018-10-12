@@ -17,6 +17,7 @@ import rmi.Server;
 
 public class ServerImplementation extends UnicastRemoteObject implements Server {
 	private static final long serialVersionUID = 1L;
+	private static final String ANY = "any";
 
 	// Persistência
 	private List<Flight> voos;
@@ -44,10 +45,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Consulta as passagens disponíveis de acordo com os filtros
 	 * 
-	 * @param origem {@link String}
-	 * @param destino {@link String}
-	 * @param dataIda {@link String}
-	 * @param dataVolta {@link String}
+	 * @param origem        {@link String}
+	 * @param destino       {@link String}
+	 * @param dataIda       {@link String}
+	 * @param dataVolta     {@link String}
 	 * @param numeroPessoas {@link Long}
 	 * @return {@link List}<{@link Airfare}>
 	 * @throws RemoteException
@@ -58,7 +59,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		// Busca os vôos compatíveis para ida
 		List<Flight> voosCompativeisIda = this.voos.stream()
 				.filter(voo -> voo.getOrigem().equals(origem) && voo.getDestino().equals(destino)
-						&& (dataIda == null || voo.getData().equals(dataIda))
+						&& (dataIda == null || dataIda.equals(ANY) || voo.getData().equals(dataIda))
 						&& voo.getVagas().compareTo(numeroPessoas) >= 0)
 				.collect(Collectors.toList());
 
@@ -76,10 +77,12 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		// Busca os vôos compatíveis para volta
 		List<Flight> voosCompativeisVolta = this.voos.stream()
 				.filter(voo -> voo.getOrigem().equals(destino) && voo.getDestino().equals(origem)
-						&& voo.getData().equals(dataVolta) && voo.getVagas().compareTo(numeroPessoas) >= 0)
+						&& (dataVolta.equals(ANY) || voo.getData().equals(dataVolta))
+						&& voo.getVagas().compareTo(numeroPessoas) >= 0)
 				.collect(Collectors.toList());
 
-		// As passagens compatíveis de ida e volta são um cross join entre voosCompativeisIda e voosCompativeisVolta
+		// As passagens compatíveis de ida e volta são um cross join entre
+		// voosCompativeisIda e voosCompativeisVolta
 		return voosCompativeisIda.stream().flatMap(vooIda -> voosCompativeisVolta.stream().map(vooVolta -> {
 			Airfare passagemIdaVolta = new Airfare();
 			passagemIdaVolta.setIda(vooIda);
@@ -132,9 +135,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Consulta as hospedagens disponíveis de acordo com os filtros
 	 * 
-	 * @param destino {@link String}
-	 * @param dataEntrada {@link String}
-	 * @param dataSaida {@link String}
+	 * @param destino       {@link String}
+	 * @param dataEntrada   {@link String}
+	 * @param dataSaida     {@link String}
 	 * @param numeroQuartos {@link Long}
 	 * @param numeroPessoas {@link Long}
 	 * @return {@link List}<{@link Accommodation}>
@@ -144,13 +147,11 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	public List<Accommodation> consultarHospedagens(String destino, String dataEntrada, String dataSaida,
 			Long numeroQuartos, Long numeroPessoas) throws RemoteException {
 		// Busca as hospedagens compatíveis
-		return this.hospedagens.stream()
-				.filter(hospedagem -> hospedagem.getCidade().equals(destino)
-						&& (dataEntrada == null || hospedagem.getDataEntrada().equals(dataEntrada))
-						&& (dataSaida == null || hospedagem.getDataSaida().equals(dataSaida))
-						&& hospedagem.getNumeroQuartos().compareTo(numeroQuartos) >= 0
-						&& hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0)
-				.map(hospedagem -> {
+		return this.hospedagens.stream().filter(hospedagem -> hospedagem.getCidade().equals(destino)
+				&& (dataEntrada == null || dataEntrada.equals(ANY) || hospedagem.getDataEntrada().equals(dataEntrada))
+				&& (dataSaida == null || dataSaida.equals(ANY) || hospedagem.getDataSaida().equals(dataSaida))
+				&& hospedagem.getNumeroQuartos().compareTo(numeroQuartos) >= 0
+				&& hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0).map(hospedagem -> {
 					hospedagem.setNumeroQuartos(numeroQuartos);
 					hospedagem.setNumeroPessoas(numeroPessoas);
 					hospedagem.setValorTotal(hospedagem.getPrecoPorQuarto() * numeroQuartos
@@ -190,10 +191,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Consulta os pacotes disponíveis de acordo com os filtros
 	 * 
-	 * @param origem {@link String}
-	 * @param destino {@link String}
-	 * @param dataIda {@link String}
-	 * @param dataVolta {@link String}
+	 * @param origem        {@link String}
+	 * @param destino       {@link String}
+	 * @param dataIda       {@link String}
+	 * @param dataVolta     {@link String}
 	 * @param numeroQuartos {@link Long}
 	 * @param numeroPessoas {@link Long}
 	 * @return {@link List}<{@link Package}>
@@ -209,7 +210,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		List<Accommodation> hospedagens = this.consultarHospedagens(destino, dataIda, dataVolta, numeroQuartos,
 				numeroPessoas);
 
-		// As passagens compatíveis de ida e volta são um cross join entre passagensIdaEVolta e hospedagens
+		// As passagens compatíveis de ida e volta são um cross join entre
+		// passagensIdaEVolta e hospedagens
 		return passagensIdaEVolta.stream().flatMap(passagem -> hospedagens.stream().map(hospedagem -> {
 			Package pacote = new Package();
 			pacote.setPassagem(passagem);
@@ -413,7 +415,6 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	 * MÉTODOS AUXILIARES
 	 */
 
-
 	/**
 	 * Pesquisa um vôo pelo seu ID
 	 * 
@@ -427,7 +428,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Valida se um vôo tem vagas suficientes
 	 *
-	 * @param voo {@link Flight}
+	 * @param voo           {@link Flight}
 	 * @param numeroPessoas {@link Long}
 	 * @return {@link Boolean}
 	 */
@@ -438,7 +439,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Desconta as vagas de um vôo
 	 *
-	 * @param voo {@link Flight}
+	 * @param voo           {@link Flight}
 	 * @param numeroPessoas {@link Long}
 	 */
 	private void descontaVagasVoo(Flight voo, Long numeroPessoas) {
@@ -462,7 +463,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Valida se uma hospedagem tem quartos suficientes
 	 *
-	 * @param hospedagem {@link Accommodation}
+	 * @param hospedagem    {@link Accommodation}
 	 * @param numeroQuartos {@link Long}
 	 * @return {@link Boolean}
 	 */
@@ -473,7 +474,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Valida se uma hospedagem tem vagas suficientes
 	 *
-	 * @param hospedagem {@link Accommodation}
+	 * @param hospedagem    {@link Accommodation}
 	 * @param numeroPessoas {@link Long}
 	 * @return {@link Boolean}
 	 */
@@ -484,7 +485,7 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Desconta as vagas de uma hospedagem
 	 *
-	 * @param hospedagem {@link Accommodation}
+	 * @param hospedagem    {@link Accommodation}
 	 * @param numeroQuartos {@link Long}
 	 * @param numeroPessoas {@link Long}
 	 */
@@ -507,7 +508,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		this.interesses.forEach(interesse -> {
 			// Se for um interesse em pacotes, trata de maneira específica
 			if (interesse.getEventoDesejado().equals(EnumDesiredEvent.PASSAGEM_E_HOSPEDAGEM)) {
-				// TODO: pacote
+				this.notificarPacote(interesse, novoVoo);
+				return;
 			}
 
 			// Caso o interesse não seja compatível, não notifica
@@ -520,8 +522,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 			try {
 				// Para todos interesses compatíveis
-				// 	- consulta todas as passagens cujo valor total é menor ou igual ao preço máximo
-				//  - para cada uma destas, notifica o cliente correspondente
+				// - consulta todas as passagens cujo valor total é menor ou igual ao preço
+				// máximo
+				// - para cada uma destas, notifica o cliente correspondente
 				this.consultarPassagens(
 						interesse.getOrigem(), interesse.getDestino(), null, null, interesse.getNumeroPessoas())
 						.stream()
@@ -552,7 +555,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		this.interesses.forEach(interesse -> {
 			// Se for um interesse em pacotes, trata de maneira específica
 			if (interesse.getEventoDesejado().equals(EnumDesiredEvent.PASSAGEM_E_HOSPEDAGEM)) {
-				// TODO: pacote
+				this.notificarPacote(interesse, novaHospedagem);
+				return;
 			}
 
 			// Caso o interesse não seja compatível, não notifica
@@ -565,8 +569,9 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 			try {
 				// Para todos interesses compatíveis
-				// 	- consulta todas as hospedagens cujo valor total é menor ou igual ao preço máximo
-				//  - para cada uma destas, notifica o cliente correspondente
+				// - consulta todas as hospedagens cujo valor total é menor ou igual ao preço
+				// máximo
+				// - para cada uma destas, notifica o cliente correspondente
 				this.consultarHospedagens(
 						interesse.getDestino(), null, null, interesse.getNumeroQuartos(), interesse.getNumeroPessoas())
 						.stream()
@@ -584,6 +589,89 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 				e.printStackTrace();
 			}
 		});
+	}
+
+	/**
+	 * Notifica um dado interesse (caso ele deva ser notificado) por conta da
+	 * criação de um novo vôo
+	 * 
+	 * @param interesse {@link Interest}
+	 * @param novoVoo   {@link Flight}
+	 */
+	private void notificarPacote(Interest interesse, Flight novoVoo) {
+		// Caso o interesse não seja compatível, não notifica
+		if (!(interesse.getOrigem().equals(novoVoo.getOrigem()) || interesse.getOrigem().equals(novoVoo.getDestino()))
+				|| !(interesse.getDestino().equals(novoVoo.getDestino())
+						|| interesse.getDestino().equals(novoVoo.getOrigem()))
+				|| interesse.getNumeroPessoas().compareTo(novoVoo.getVagas()) > 0) {
+			return;
+		}
+
+		try {
+			// Para todos interesses compatíveis
+			// - consulta todos os pacotes cujo valor total é menor ou igual ao preço
+			// máximo
+			// - para cada uma destes, notifica o cliente correspondente
+			this.consultarPacotes(
+					interesse.getOrigem(), interesse
+							.getDestino(),
+					ANY, ANY, interesse.getNumeroQuartos(), interesse.getNumeroPessoas()).stream()
+					.filter(pacote -> (pacote.getPassagem().getIda().getId().equals(novoVoo.getId())
+							|| (pacote.getPassagem().getVolta() != null
+									&& pacote.getPassagem().getVolta().getId().equals(novoVoo.getId())))
+							&& pacote.getPassagem().getVolta() != null
+							&& pacote.getPassagem().getIda().getData().equals(pacote.getHospedagem().getDataEntrada())
+							&& pacote.getPassagem().getVolta().getData().equals(pacote.getHospedagem().getDataSaida())
+							&& pacote.getValorTotal().compareTo(interesse.getPrecoMaximo()) <= 0)
+					.forEach(pacoteNotificacao -> {
+						try {
+							interesse.getCliente().notificar(pacoteNotificacao);
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+					});
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Notifica um dado interesse (caso ele deva ser notificado) por conta da
+	 * criação de uma nova hospedagem
+	 * 
+	 * @param interesse      {@link Interest}
+	 * @param novaHospedagem {@link Accommodation}
+	 */
+	private void notificarPacote(Interest interesse, Accommodation novaHospedagem) {
+		// Caso o interesse não seja compatível, não notifica
+		if (!interesse.getDestino().equals(novaHospedagem.getCidade())
+				|| interesse.getNumeroQuartos().compareTo(novaHospedagem.getNumeroQuartos()) > 0
+				|| interesse.getNumeroPessoas().compareTo(novaHospedagem.getNumeroPessoas()) > 0) {
+			return;
+		}
+
+		try {
+			// Para todos interesses compatíveis
+			// - consulta todos os pacotes cujo valor total é menor ou igual ao preço
+			// máximo
+			// - para cada uma destes, notifica o cliente correspondente
+			this.consultarPacotes(interesse.getOrigem(), interesse.getDestino(), ANY, ANY, interesse.getNumeroQuartos(),
+					interesse.getNumeroPessoas()).stream()
+					.filter(pacote -> pacote.getHospedagem().getId().equals(novaHospedagem.getId())
+							&& pacote.getPassagem().getVolta() != null
+							&& pacote.getPassagem().getIda().getData().equals(pacote.getHospedagem().getDataEntrada())
+							&& pacote.getPassagem().getVolta().getData().equals(pacote.getHospedagem().getDataSaida())
+							&& pacote.getValorTotal().compareTo(interesse.getPrecoMaximo()) <= 0)
+					.forEach(pacoteNotificacao -> {
+						try {
+							interesse.getCliente().notificar(pacoteNotificacao);
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+					});
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
