@@ -148,6 +148,7 @@ public class ClientMain {
 
 					Output.imprimirMesmaLinha("Informe o número de quartos: ");
 					numeroQuartos = scanner.nextLong();
+					scanner.nextLine();
 
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
@@ -161,9 +162,11 @@ public class ClientMain {
 					// Comprar hospedagem
 					Output.imprimirMesmaLinha("Informe o código: ");
 					codigo = scanner.nextLong();
+					scanner.nextLine();
 
 					Output.imprimirMesmaLinha("Informe o número de quartos: ");
 					numeroQuartos = scanner.nextLong();
+					scanner.nextLine();
 
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
@@ -192,6 +195,7 @@ public class ClientMain {
 
 					Output.imprimirMesmaLinha("Informe o número de quartos: ");
 					numeroQuartos = scanner.nextLong();
+					scanner.nextLine();
 
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
@@ -220,6 +224,7 @@ public class ClientMain {
 
 					Output.imprimirMesmaLinha("Informe o número de quartos: ");
 					numeroQuartos = scanner.nextLong();
+					scanner.nextLine();
 
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
@@ -294,6 +299,7 @@ public class ClientMain {
 
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
+					scanner.nextLine();
 
 					Output.imprimirMesmaLinha("Informe o preço máximo: ");
 					preco = scanner.nextLong();

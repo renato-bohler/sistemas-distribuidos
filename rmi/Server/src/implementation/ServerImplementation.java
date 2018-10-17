@@ -45,11 +45,16 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Consulta as passagens disponíveis de acordo com os filtros
 	 * 
-	 * @param origem        {@link String}
-	 * @param destino       {@link String}
-	 * @param dataIda       {@link String}
-	 * @param dataVolta     {@link String}
-	 * @param numeroPessoas {@link Long}
+	 * @param origem
+	 *            {@link String}
+	 * @param destino
+	 *            {@link String}
+	 * @param dataIda
+	 *            {@link String}
+	 * @param dataVolta
+	 *            {@link String}
+	 * @param numeroPessoas
+	 *            {@link Long}
 	 * @return {@link List}<{@link Airfare}>
 	 * @throws RemoteException
 	 */
@@ -64,7 +69,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 				.collect(Collectors.toList());
 
 		if (dataVolta == null) {
-			// Caso seja somente ida, retorna as passagens de ida correspondentes
+			// Caso seja somente ida, retorna as passagens de ida
+			// correspondentes
 			return voosCompativeisIda.stream().map(vooIda -> {
 				Airfare passagemIda = new Airfare();
 				passagemIda.setIda(vooIda);
@@ -135,11 +141,16 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Consulta as hospedagens disponíveis de acordo com os filtros
 	 * 
-	 * @param destino       {@link String}
-	 * @param dataEntrada   {@link String}
-	 * @param dataSaida     {@link String}
-	 * @param numeroQuartos {@link Long}
-	 * @param numeroPessoas {@link Long}
+	 * @param destino
+	 *            {@link String}
+	 * @param dataEntrada
+	 *            {@link String}
+	 * @param dataSaida
+	 *            {@link String}
+	 * @param numeroQuartos
+	 *            {@link Long}
+	 * @param numeroPessoas
+	 *            {@link Long}
 	 * @return {@link List}<{@link Accommodation}>
 	 * @throws RemoteException
 	 */
@@ -151,7 +162,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 				&& (dataEntrada == null || dataEntrada.equals(ANY) || hospedagem.getDataEntrada().equals(dataEntrada))
 				&& (dataSaida == null || dataSaida.equals(ANY) || hospedagem.getDataSaida().equals(dataSaida))
 				&& hospedagem.getNumeroQuartos().compareTo(numeroQuartos) >= 0
-				&& hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0).map(hospedagem -> {
+				&& hospedagem.getNumeroPessoas().compareTo(numeroPessoas) >= 0).map(h -> {
+					Accommodation hospedagem = this.copiar(h);
 					hospedagem.setNumeroQuartos(numeroQuartos);
 					hospedagem.setNumeroPessoas(numeroPessoas);
 					hospedagem.setValorTotal(hospedagem.getPrecoPorQuarto() * numeroQuartos
@@ -163,7 +175,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Compra uma hospedagem
 	 * 
-	 * @param hospedagem {@link Accommodation}
+	 * @param hospedagem
+	 *            {@link Accommodation}
 	 * @return {@link String}
 	 * @throws RemoteException
 	 */
@@ -191,12 +204,18 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Consulta os pacotes disponíveis de acordo com os filtros
 	 * 
-	 * @param origem        {@link String}
-	 * @param destino       {@link String}
-	 * @param dataIda       {@link String}
-	 * @param dataVolta     {@link String}
-	 * @param numeroQuartos {@link Long}
-	 * @param numeroPessoas {@link Long}
+	 * @param origem
+	 *            {@link String}
+	 * @param destino
+	 *            {@link String}
+	 * @param dataIda
+	 *            {@link String}
+	 * @param dataVolta
+	 *            {@link String}
+	 * @param numeroQuartos
+	 *            {@link Long}
+	 * @param numeroPessoas
+	 *            {@link Long}
 	 * @return {@link List}<{@link Package}>
 	 * @throws RemoteException
 	 */
@@ -214,8 +233,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		// passagensIdaEVolta e hospedagens
 		return passagensIdaEVolta.stream().flatMap(passagem -> hospedagens.stream().map(hospedagem -> {
 			Package pacote = new Package();
-			pacote.setPassagem(passagem);
-			pacote.setHospedagem(hospedagem);
+			pacote.setPassagem(this.copiar(passagem));
+			pacote.setHospedagem(this.copiar(hospedagem));
 			pacote.setValorTotal(passagem.getValorTotal() + hospedagem.getValorTotal());
 			return pacote;
 		})).collect(Collectors.toList());
@@ -224,7 +243,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Compra um pacote
 	 * 
-	 * @param pacote {@link Package}
+	 * @param pacote
+	 *            {@link Package}
 	 * @return {@link String}
 	 * @throws RemoteException
 	 */
@@ -268,7 +288,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Consulta os interesses de um dado cliente
 	 * 
-	 * @param referencia {@link Client}
+	 * @param referencia
+	 *            {@link Client}
 	 * @return {@link List}<{@link Interest}>
 	 * @throws RemoteException
 	 */
@@ -282,21 +303,24 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Registra interesse em um evento
 	 * 
-	 * @param interesse {@link Interest}
+	 * @param interesse
+	 *            {@link Interest}
 	 * @return {@link String}
 	 * @throws RemoteException
 	 */
 	@Override
 	public String registrarInteresse(Interest interesse) throws RemoteException {
-		interesse.setId(sequence++);
-		this.interesses.add(interesse);
+		Interest novoInteresse = this.copiar(interesse);
+
+		this.interesses.add(novoInteresse);
 		return "Interesse registrado com sucesso";
 	}
 
 	/**
 	 * Remove o interesse de um evento
 	 * 
-	 * @param interesse {@link Interest}
+	 * @param interesse
+	 *            {@link Interest}
 	 * @return {@link String}
 	 * @throws RemoteException
 	 */
@@ -329,22 +353,27 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Cadastra um vôo
 	 * 
-	 * @param voo {@link Flight}
+	 * @param voo
+	 *            {@link Flight}
 	 * @return {@link String}
 	 * @throws RemoteException
 	 */
 	@Override
 	public String cadastrarVoo(Flight voo) throws RemoteException {
 		voo.setId(sequence++);
-		this.voos.add(voo);
-		this.notificarCadastroVoo(voo);
+
+		Flight novoVoo = this.copiar(voo);
+
+		this.voos.add(novoVoo);
+		this.notificarCadastroVoo(novoVoo);
 		return "Vôo cadastrado com sucesso";
 	}
 
 	/**
 	 * Remove um vôo
 	 * 
-	 * @param voo {@link Flight}
+	 * @param voo
+	 *            {@link Flight}
 	 * @return {@link String}
 	 * @throws RemoteException
 	 */
@@ -377,22 +406,27 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Cadastra uma hospedagem
 	 * 
-	 * @param hospedagem {@link Accommodation}
+	 * @param hospedagem
+	 *            {@link Accommodation}
 	 * @return {@link String}
 	 * @throws RemoteException
 	 */
 	@Override
 	public String cadastrarHospedagem(Accommodation hospedagem) throws RemoteException {
 		hospedagem.setId(sequence++);
-		this.hospedagens.add(hospedagem);
-		this.notificarCadastroHospedagem(hospedagem);
+
+		Accommodation novaHospedagem = this.copiar(hospedagem);
+
+		this.hospedagens.add(novaHospedagem);
+		this.notificarCadastroHospedagem(novaHospedagem);
 		return "Hospedagem cadastrada com sucesso";
 	}
 
 	/**
 	 * Remove uma hospedagem
 	 * 
-	 * @param hospedagem {@link Accommodation}
+	 * @param hospedagem
+	 *            {@link Accommodation}
 	 * @return {@link String}
 	 * @throws RemoteException
 	 */
@@ -418,7 +452,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Pesquisa um vôo pelo seu ID
 	 * 
-	 * @param idVoo {@link Long}
+	 * @param idVoo
+	 *            {@link Long}
 	 * @return {@link Flight}
 	 */
 	private Flight pesquisaVoo(Long idVoo) {
@@ -428,8 +463,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Valida se um vôo tem vagas suficientes
 	 *
-	 * @param voo           {@link Flight}
-	 * @param numeroPessoas {@link Long}
+	 * @param voo
+	 *            {@link Flight}
+	 * @param numeroPessoas
+	 *            {@link Long}
 	 * @return {@link Boolean}
 	 */
 	private Boolean vagasSuficientesVoo(Flight voo, Long numeroPessoas) {
@@ -439,8 +476,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Desconta as vagas de um vôo
 	 *
-	 * @param voo           {@link Flight}
-	 * @param numeroPessoas {@link Long}
+	 * @param voo
+	 *            {@link Flight}
+	 * @param numeroPessoas
+	 *            {@link Long}
 	 */
 	private void descontaVagasVoo(Flight voo, Long numeroPessoas) {
 		voo.setVagas(voo.getVagas() - numeroPessoas);
@@ -452,7 +491,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Pesquisa uma hospedagem pelo seu ID
 	 * 
-	 * @param idHospedagem {@link Long}
+	 * @param idHospedagem
+	 *            {@link Long}
 	 * @return {@link Accommodation}
 	 */
 	private Accommodation pesquisaHospedagem(Long idHospedagem) {
@@ -463,8 +503,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Valida se uma hospedagem tem quartos suficientes
 	 *
-	 * @param hospedagem    {@link Accommodation}
-	 * @param numeroQuartos {@link Long}
+	 * @param hospedagem
+	 *            {@link Accommodation}
+	 * @param numeroQuartos
+	 *            {@link Long}
 	 * @return {@link Boolean}
 	 */
 	private Boolean quartosSuficientesHospedagem(Accommodation hospedagem, Long numeroQuartos) {
@@ -474,8 +516,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Valida se uma hospedagem tem vagas suficientes
 	 *
-	 * @param hospedagem    {@link Accommodation}
-	 * @param numeroPessoas {@link Long}
+	 * @param hospedagem
+	 *            {@link Accommodation}
+	 * @param numeroPessoas
+	 *            {@link Long}
 	 * @return {@link Boolean}
 	 */
 	private Boolean vagasSuficientesHospedagem(Accommodation hospedagem, Long numeroPessoas) {
@@ -485,9 +529,12 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Desconta as vagas de uma hospedagem
 	 *
-	 * @param hospedagem    {@link Accommodation}
-	 * @param numeroQuartos {@link Long}
-	 * @param numeroPessoas {@link Long}
+	 * @param hospedagem
+	 *            {@link Accommodation}
+	 * @param numeroQuartos
+	 *            {@link Long}
+	 * @param numeroPessoas
+	 *            {@link Long}
 	 */
 	private void descontaVagasHospedagem(Accommodation hospedagem, Long numeroQuartos, Long numeroPessoas) {
 		hospedagem.setNumeroQuartos(hospedagem.getNumeroQuartos() - numeroQuartos);
@@ -501,7 +548,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Notifica o cadastro de um novo vôo para todos interessados
 	 *
-	 * @param novoVoo {@link Flight}
+	 * @param novoVoo
+	 *            {@link Flight}
 	 */
 	private void notificarCadastroVoo(Flight novoVoo) {
 		// Para cada interesse cadastrado
@@ -522,11 +570,12 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 			try {
 				// Para todos interesses compatíveis
-				// - consulta todas as passagens cujo valor total é menor ou igual ao preço
+				// - consulta todas as passagens cujo valor total é menor ou
+				// igual ao preço
 				// máximo
 				// - para cada uma destas, notifica o cliente correspondente
-				this.consultarPassagens(
-						interesse.getOrigem(), interesse.getDestino(), null, null, interesse.getNumeroPessoas())
+				this.consultarPassagens(interesse.getOrigem(), interesse.getDestino(), null, null,
+						interesse.getNumeroPessoas())
 						.stream()
 						.filter(passagem -> (passagem.getIda().getId().equals(novoVoo.getId())
 								|| (passagem.getVolta() != null && passagem.getVolta().getId().equals(novoVoo.getId())))
@@ -548,7 +597,8 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	/**
 	 * Notifica o cadastro de uma nova hospedagem para todos interessados
 	 *
-	 * @param novaHospedagem {@link Accommodation}
+	 * @param novaHospedagem
+	 *            {@link Accommodation}
 	 */
 	private void notificarCadastroHospedagem(Accommodation novaHospedagem) {
 		// Para cada interesse cadastrado
@@ -569,11 +619,12 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 			try {
 				// Para todos interesses compatíveis
-				// - consulta todas as hospedagens cujo valor total é menor ou igual ao preço
+				// - consulta todas as hospedagens cujo valor total é menor ou
+				// igual ao preço
 				// máximo
 				// - para cada uma destas, notifica o cliente correspondente
-				this.consultarHospedagens(
-						interesse.getDestino(), null, null, interesse.getNumeroQuartos(), interesse.getNumeroPessoas())
+				this.consultarHospedagens(interesse.getDestino(), null, null, interesse.getNumeroQuartos(),
+						interesse.getNumeroPessoas())
 						.stream()
 						.filter(hospedagem -> hospedagem.getId().equals(novaHospedagem.getId())
 								&& hospedagem.getValorTotal().compareTo(interesse.getPrecoMaximo()) <= 0)
@@ -595,8 +646,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	 * Notifica um dado interesse (caso ele deva ser notificado) por conta da
 	 * criação de um novo vôo
 	 * 
-	 * @param interesse {@link Interest}
-	 * @param novoVoo   {@link Flight}
+	 * @param interesse
+	 *            {@link Interest}
+	 * @param novoVoo
+	 *            {@link Flight}
 	 */
 	private void notificarPacote(Interest interesse, Flight novoVoo) {
 		// Caso o interesse não seja compatível, não notifica
@@ -609,13 +662,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 		try {
 			// Para todos interesses compatíveis
-			// - consulta todos os pacotes cujo valor total é menor ou igual ao preço
+			// - consulta todos os pacotes cujo valor total é menor ou igual ao
+			// preço
 			// máximo
 			// - para cada uma destes, notifica o cliente correspondente
-			this.consultarPacotes(
-					interesse.getOrigem(), interesse
-							.getDestino(),
-					ANY, ANY, interesse.getNumeroQuartos(), interesse.getNumeroPessoas()).stream()
+			this.consultarPacotes(interesse.getOrigem(), interesse.getDestino(), ANY, ANY, interesse.getNumeroQuartos(),
+					interesse.getNumeroPessoas())
+					.stream()
 					.filter(pacote -> (pacote.getPassagem().getIda().getId().equals(novoVoo.getId())
 							|| (pacote.getPassagem().getVolta() != null
 									&& pacote.getPassagem().getVolta().getId().equals(novoVoo.getId())))
@@ -639,8 +692,10 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 	 * Notifica um dado interesse (caso ele deva ser notificado) por conta da
 	 * criação de uma nova hospedagem
 	 * 
-	 * @param interesse      {@link Interest}
-	 * @param novaHospedagem {@link Accommodation}
+	 * @param interesse
+	 *            {@link Interest}
+	 * @param novaHospedagem
+	 *            {@link Accommodation}
 	 */
 	private void notificarPacote(Interest interesse, Accommodation novaHospedagem) {
 		// Caso o interesse não seja compatível, não notifica
@@ -652,11 +707,13 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 
 		try {
 			// Para todos interesses compatíveis
-			// - consulta todos os pacotes cujo valor total é menor ou igual ao preço
+			// - consulta todos os pacotes cujo valor total é menor ou igual ao
+			// preço
 			// máximo
 			// - para cada uma destes, notifica o cliente correspondente
 			this.consultarPacotes(interesse.getOrigem(), interesse.getDestino(), ANY, ANY, interesse.getNumeroQuartos(),
-					interesse.getNumeroPessoas()).stream()
+					interesse.getNumeroPessoas())
+					.stream()
 					.filter(pacote -> pacote.getHospedagem().getId().equals(novaHospedagem.getId())
 							&& pacote.getPassagem().getVolta() != null
 							&& pacote.getPassagem().getIda().getData().equals(pacote.getHospedagem().getDataEntrada())
@@ -672,6 +729,85 @@ public class ServerImplementation extends UnicastRemoteObject implements Server 
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Copia uma instãncia de võo para uma nova.
+	 * 
+	 * @param voo
+	 *            {@link Flight}
+	 * @return {@link Flight}
+	 */
+	private Flight copiar(Flight voo) {
+		Flight novaInstancia = new Flight();
+		novaInstancia.setId(voo.getId());
+		novaInstancia.setData(voo.getData());
+		novaInstancia.setDestino(voo.getDestino());
+		novaInstancia.setOrigem(voo.getOrigem());
+		novaInstancia.setPrecoUnitario(voo.getPrecoUnitario());
+		novaInstancia.setVagas(voo.getVagas());
+
+		return novaInstancia;
+	}
+
+	/**
+	 * Copia uma instãncia de passagem para uma nova.
+	 * 
+	 * @param passagem
+	 *            {@link Airfare}
+	 * @return {@link Airfare}
+	 */
+	private Airfare copiar(Airfare passagem) {
+		Airfare novaInstancia = new Airfare();
+		novaInstancia.setIda(passagem.getIda());
+		novaInstancia.setNumeroPessoas(passagem.getNumeroPessoas());
+		novaInstancia.setValorTotal(passagem.getValorTotal());
+		novaInstancia.setVolta(passagem.getVolta());
+
+		return novaInstancia;
+	}
+
+	/**
+	 * Copia uma instãncia de hospedagem para uma nova.
+	 * 
+	 * @param hospedagem
+	 *            {@link Accommodation}
+	 * @return {@link Accommodation}
+	 */
+	private Accommodation copiar(Accommodation hospedagem) {
+		Accommodation novaInstancia = new Accommodation();
+		novaInstancia.setId(hospedagem.getId());
+		novaInstancia.setCidade(hospedagem.getCidade());
+		novaInstancia.setDataEntrada(hospedagem.getDataEntrada());
+		novaInstancia.setDataSaida(hospedagem.getDataSaida());
+		novaInstancia.setNumeroPessoas(hospedagem.getNumeroPessoas());
+		novaInstancia.setNumeroQuartos(hospedagem.getNumeroQuartos());
+		novaInstancia.setPrecoPorPessoa(hospedagem.getPrecoPorPessoa());
+		novaInstancia.setPrecoPorQuarto(hospedagem.getPrecoPorQuarto());
+		novaInstancia.setValorTotal(hospedagem.getValorTotal());
+
+		return novaInstancia;
+	}
+
+	/**
+	 * Copia uma instãncia de interesse para uma nova.
+	 * 
+	 * @param interesse
+	 *            {@link Interest}
+	 * @return {@link Interest}
+	 */
+	private Interest copiar(Interest interesse) {
+		Interest novaInstancia = new Interest();
+		novaInstancia.setId(interesse.getId());
+		novaInstancia.setCliente(interesse.getCliente());
+		novaInstancia.setDestino(interesse.getDestino());
+		novaInstancia.setEventoDesejado(interesse.getEventoDesejado());
+		novaInstancia.setNumeroPessoas(interesse.getNumeroPessoas());
+		novaInstancia.setNumeroQuartos(interesse.getNumeroQuartos());
+		novaInstancia.setOrigem(interesse.getOrigem());
+		novaInstancia.setPrecoMaximo(interesse.getPrecoMaximo());
+
+		return novaInstancia;
 	}
 
 }

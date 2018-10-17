@@ -71,6 +71,7 @@ public class ServerMain {
 
 					Output.imprimirMesmaLinha("Informe o número de vagas: ");
 					numeroVagas = scanner.nextLong();
+					scanner.nextLine();
 
 					Output.imprimirMesmaLinha("Informe o preço de passagem unitário: ");
 					preco = scanner.nextLong();
@@ -114,13 +115,16 @@ public class ServerMain {
 
 					Output.imprimirMesmaLinha("Informe o número de quartos: ");
 					numeroQuartos = scanner.nextLong();
-
+					scanner.nextLine();
+					
 					Output.imprimirMesmaLinha("Informe o número de pessoas: ");
 					numeroPessoas = scanner.nextLong();
-
+					scanner.nextLine();
+					
 					Output.imprimirMesmaLinha("Informe o preço por quarto: ");
 					precoPorQuarto = scanner.nextLong();
-
+					scanner.nextLine();
+					
 					Output.imprimirMesmaLinha("Informe o preço por pessoa: ");
 					precoPorPessoa = scanner.nextLong();
 					scanner.nextLine();
