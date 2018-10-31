@@ -9,7 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.renato.bohler.sd.webservices.WebServices.model.Flight;
+import com.renato.bohler.sd.webservices.WebServices.api.FlightApi;
 import com.renato.bohler.sd.webservices.WebServices.rn.FlightRn;
 
 @Path("/flight")
@@ -21,7 +21,7 @@ public class FlightRest {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Flight> listar() {
+	public List<FlightApi> listar() {
 		return flightRn.listar();
 	}
 }
