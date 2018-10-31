@@ -9,7 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.renato.bohler.sd.webservices.WebServices.model.Accommodation;
+import com.renato.bohler.sd.webservices.WebServices.api.AccommodationApi;
 import com.renato.bohler.sd.webservices.WebServices.rn.AccommodationRn;
 
 @Path("/accommodation")
@@ -21,7 +21,7 @@ public class AccommodationRest {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Accommodation> listar() {
+	public List<AccommodationApi> listar() {
 		return accommodationRn.listar();
 	}
 }
