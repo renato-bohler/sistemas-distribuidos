@@ -6,8 +6,7 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.TypedQuery;
 
 import com.renato.bohler.sd.webservices.WebServices.model.Accommodation;
 
@@ -19,10 +18,9 @@ public class AccommodationDao implements Serializable {
 	private EntityManager em;
 
 	public List<Accommodation> listar() {
-		CriteriaQuery<Accommodation> criteria = em.getCriteriaBuilder().createQuery(Accommodation.class);
-		Root<Accommodation> accommodation = criteria.from(Accommodation.class);
-		criteria.select(accommodation);
-		return em.createQuery(criteria).getResultList();
+		TypedQuery<Accommodation> query = em.createQuery("select a from Accommodation a", Accommodation.class);
+
+		return query.getResultList();
 	}
 
 }
