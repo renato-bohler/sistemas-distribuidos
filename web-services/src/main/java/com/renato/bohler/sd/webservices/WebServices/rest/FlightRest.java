@@ -12,6 +12,9 @@ import javax.ws.rs.core.MediaType;
 import com.renato.bohler.sd.webservices.WebServices.api.FlightApi;
 import com.renato.bohler.sd.webservices.WebServices.rn.FlightRn;
 
+import io.swagger.annotations.Api;
+
+@Api
 @Path("/flight")
 @RequestScoped
 public class FlightRest {

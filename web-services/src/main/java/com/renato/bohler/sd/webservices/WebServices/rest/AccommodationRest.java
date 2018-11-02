@@ -12,6 +12,9 @@ import javax.ws.rs.core.MediaType;
 import com.renato.bohler.sd.webservices.WebServices.api.AccommodationApi;
 import com.renato.bohler.sd.webservices.WebServices.rn.AccommodationRn;
 
+import io.swagger.annotations.Api;
+
+@Api
 @Path("/accommodation")
 @RequestScoped
 public class AccommodationRest {
