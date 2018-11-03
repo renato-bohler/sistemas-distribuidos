@@ -27,7 +27,7 @@ public class AccommodationRest {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(nickname = "listar-hospedagem", value = "Lista todos as hospedagens", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@ApiOperation(nickname = "listar-hospedagem", value = "Lista todas as hospedagens", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	@ApiResponses(@ApiResponse(code = 201, message = "Hospedagens listadas", response = AccommodationApi.class))
 	public List<AccommodationApi> listar() {
 		return accommodationRn.listar();
