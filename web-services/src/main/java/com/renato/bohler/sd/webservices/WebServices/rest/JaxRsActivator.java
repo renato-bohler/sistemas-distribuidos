@@ -32,6 +32,8 @@ public class JaxRsActivator extends Application {
 		resources.add(SwaggerSerializers.class);
 		resources.add(FlightRest.class);
 		resources.add(AccommodationRest.class);
+		resources.add(AirfareRest.class);
+		resources.add(PackageRest.class);
 		return resources;
 	}
 }
