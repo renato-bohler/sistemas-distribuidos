@@ -1,9 +1,6 @@
 package com.renato.bohler.sd.webservices.WebServices.api;
 
-import java.io.Serializable;
-
-@SuppressWarnings("serial")
-public class AirfareApi implements Serializable {
+public class AirfareApi {
 
 	private Long numeroPessoas;
 	private Long valorTotal;

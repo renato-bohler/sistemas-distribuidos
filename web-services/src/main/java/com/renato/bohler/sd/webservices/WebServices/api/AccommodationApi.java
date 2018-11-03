@@ -1,10 +1,8 @@
 package com.renato.bohler.sd.webservices.WebServices.api;
 
-import java.io.Serializable;
 import java.util.Date;
 
-@SuppressWarnings("serial")
-public class AccommodationApi implements Serializable {
+public class AccommodationApi {
 
 	private Long id;
 	private String cidade;

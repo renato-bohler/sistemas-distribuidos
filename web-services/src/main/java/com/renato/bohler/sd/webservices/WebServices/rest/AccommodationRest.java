@@ -2,7 +2,6 @@ package com.renato.bohler.sd.webservices.WebServices.rest;
 
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -23,7 +22,6 @@ import io.swagger.annotations.ApiResponses;
 
 @Api(value = "/accommodation")
 @Path("/accommodation")
-@RequestScoped
 public class AccommodationRest {
 
 	@Inject

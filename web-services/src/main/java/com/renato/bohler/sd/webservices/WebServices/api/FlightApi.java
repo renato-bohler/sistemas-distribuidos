@@ -1,10 +1,8 @@
 package com.renato.bohler.sd.webservices.WebServices.api;
 
-import java.io.Serializable;
 import java.util.Date;
 
-@SuppressWarnings("serial")
-public class FlightApi implements Serializable {
+public class FlightApi {
 
 	private Long id;
 	private String origem;

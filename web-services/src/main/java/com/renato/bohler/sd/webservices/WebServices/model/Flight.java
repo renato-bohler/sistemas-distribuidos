@@ -1,6 +1,5 @@
 package com.renato.bohler.sd.webservices.WebServices.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -8,9 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-@SuppressWarnings("serial")
 @Entity
-public class Flight implements Serializable {
+public class Flight {
 
 	@Id
 	@GeneratedValue

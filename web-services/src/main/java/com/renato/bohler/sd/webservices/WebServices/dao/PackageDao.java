@@ -1,19 +1,17 @@
 package com.renato.bohler.sd.webservices.WebServices.dao;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
+import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import com.renato.bohler.sd.webservices.WebServices.api.PackageApi;
 
-@SuppressWarnings("serial")
-@RequestScoped
-public class PackageDao implements Serializable {
+@Stateful
+public class PackageDao {
 
 	@PersistenceContext
 	private EntityManager em;

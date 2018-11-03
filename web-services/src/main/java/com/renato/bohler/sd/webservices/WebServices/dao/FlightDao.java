@@ -1,18 +1,16 @@
 package com.renato.bohler.sd.webservices.WebServices.dao;
 
-import java.io.Serializable;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
+import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import com.renato.bohler.sd.webservices.WebServices.model.Flight;
 
-@SuppressWarnings("serial")
-@RequestScoped
-public class FlightDao implements Serializable {
+@Stateful
+public class FlightDao {
 
 	@PersistenceContext
 	private EntityManager em;

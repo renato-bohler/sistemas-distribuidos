@@ -3,7 +3,6 @@ package com.renato.bohler.sd.webservices.WebServices.rest;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,7 +21,6 @@ import io.swagger.annotations.ApiResponses;
 
 @Api(value = "/package")
 @Path("/package")
-@RequestScoped
 public class PackageRest {
 
 	@Inject

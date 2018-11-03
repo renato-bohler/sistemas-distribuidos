@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.renato.bohler.sd.webservices.WebServices.api.AccommodationApi;
 import com.renato.bohler.sd.webservices.WebServices.dao.AccommodationDao;
 import com.renato.bohler.sd.webservices.WebServices.model.Accommodation;
 
-@ApplicationScoped
 public class AccommodationRn {
 
 	@Inject

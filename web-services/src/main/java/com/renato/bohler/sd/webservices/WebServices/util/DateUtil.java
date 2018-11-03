@@ -5,9 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.enterprise.context.ApplicationScoped;
-
-@ApplicationScoped
 public class DateUtil {
 
 	public Date getDateFromString(String dateString) {

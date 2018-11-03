@@ -1,9 +1,6 @@
 package com.renato.bohler.sd.webservices.WebServices.api;
 
-import java.io.Serializable;
-
-@SuppressWarnings("serial")
-public class PackageApi implements Serializable {
+public class PackageApi {
 
 	private AirfareApi passagem;
 	private AccommodationApi hospedagem;

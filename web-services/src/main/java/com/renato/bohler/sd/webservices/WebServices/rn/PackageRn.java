@@ -3,13 +3,11 @@ package com.renato.bohler.sd.webservices.WebServices.rn;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.renato.bohler.sd.webservices.WebServices.api.PackageApi;
 import com.renato.bohler.sd.webservices.WebServices.dao.PackageDao;
 
-@ApplicationScoped
 public class PackageRn {
 
 	@Inject

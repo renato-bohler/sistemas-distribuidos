@@ -1,6 +1,5 @@
 package com.renato.bohler.sd.webservices.WebServices.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -9,8 +8,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@SuppressWarnings("serial")
-public class Accommodation implements Serializable {
+public class Accommodation {
 
 	@Id
 	@GeneratedValue
