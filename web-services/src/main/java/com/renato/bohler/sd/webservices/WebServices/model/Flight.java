@@ -1,6 +1,7 @@
 package com.renato.bohler.sd.webservices.WebServices.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,7 +23,7 @@ public class Flight implements Serializable {
 	private String destino;
 
 	@NotNull
-	private String data;
+	private Date data;
 
 	@NotNull
 	private Long vagas;
@@ -54,11 +55,11 @@ public class Flight implements Serializable {
 		this.destino = destino;
 	}
 
-	public String getData() {
+	public Date getData() {
 		return data;
 	}
 
-	public void setData(String data) {
+	public void setData(Date data) {
 		this.data = data;
 	}
 

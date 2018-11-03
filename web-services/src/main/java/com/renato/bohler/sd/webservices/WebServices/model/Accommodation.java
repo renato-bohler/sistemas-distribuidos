@@ -1,6 +1,7 @@
 package com.renato.bohler.sd.webservices.WebServices.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,10 +20,10 @@ public class Accommodation implements Serializable {
 	private String cidade;
 
 	@NotNull
-	private String dataEntrada;
+	private Date dataEntrada;
 
 	@NotNull
-	private String dataSaida;
+	private Date dataSaida;
 
 	@NotNull
 	private Long numeroQuartos;
@@ -52,19 +53,19 @@ public class Accommodation implements Serializable {
 		this.cidade = cidade;
 	}
 
-	public String getDataEntrada() {
+	public Date getDataEntrada() {
 		return dataEntrada;
 	}
 
-	public void setDataEntrada(String dataEntrada) {
+	public void setDataEntrada(Date dataEntrada) {
 		this.dataEntrada = dataEntrada;
 	}
 
-	public String getDataSaida() {
+	public Date getDataSaida() {
 		return dataSaida;
 	}
 
-	public void setDataSaida(String dataSaida) {
+	public void setDataSaida(Date dataSaida) {
 		this.dataSaida = dataSaida;
 	}
 

@@ -1,6 +1,7 @@
 package com.renato.bohler.sd.webservices.WebServices.api;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class FlightApi implements Serializable {
@@ -8,7 +9,7 @@ public class FlightApi implements Serializable {
 	private Long id;
 	private String origem;
 	private String destino;
-	private String data;
+	private Date data;
 	private Long vagas;
 
 	public Long getId() {
@@ -35,11 +36,11 @@ public class FlightApi implements Serializable {
 		this.destino = destino;
 	}
 
-	public String getData() {
+	public Date getData() {
 		return data;
 	}
 
-	public void setData(String data) {
+	public void setData(Date data) {
 		this.data = data;
 	}
 

@@ -1,14 +1,15 @@
 package com.renato.bohler.sd.webservices.WebServices.api;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class AccommodationApi implements Serializable {
 
 	private Long id;
 	private String cidade;
-	private String dataEntrada;
-	private String dataSaida;
+	private Date dataEntrada;
+	private Date dataSaida;
 	private Long numeroQuartos;
 	private Long numeroPessoas;
 	private Long precoPorQuarto;
@@ -31,19 +32,19 @@ public class AccommodationApi implements Serializable {
 		this.cidade = cidade;
 	}
 
-	public String getDataEntrada() {
+	public Date getDataEntrada() {
 		return dataEntrada;
 	}
 
-	public void setDataEntrada(String dataEntrada) {
+	public void setDataEntrada(Date dataEntrada) {
 		this.dataEntrada = dataEntrada;
 	}
 
-	public String getDataSaida() {
+	public Date getDataSaida() {
 		return dataSaida;
 	}
 
-	public void setDataSaida(String dataSaida) {
+	public void setDataSaida(Date dataSaida) {
 		this.dataSaida = dataSaida;
 	}
 
