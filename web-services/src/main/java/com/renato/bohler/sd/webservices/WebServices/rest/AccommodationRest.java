@@ -5,10 +5,12 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.renato.bohler.sd.webservices.WebServices.api.AccommodationApi;
 import com.renato.bohler.sd.webservices.WebServices.rn.AccommodationRn;
@@ -40,4 +42,18 @@ public class AccommodationRest {
 		return accommodationRn.listar(cidade, dateUtil.getDateFromString(dataEntrada),
 				dateUtil.getDateFromString(dataSaida), numeroQuartos, numeroPessoas);
 	}
+
+	@POST
+	@Path("/comprar")
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(nickname = "comprar-hospedagem", value = "Compra uma hospedagem pelo seu ID", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@ApiResponses({ @ApiResponse(code = 201, message = "Hospedagem comprada"),
+			@ApiResponse(code = 400, message = "Hospedagem não disponível") })
+	public Response comprar(AccommodationApi hospedagemApi) {
+		if (accommodationRn.comprar(hospedagemApi)) {
+			return Response.ok().build();
+		}
+		return Response.status(400).build();
+	}
+
 }

@@ -8,8 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-@SuppressWarnings("serial")
 @Entity
+@SuppressWarnings("serial")
 public class Accommodation implements Serializable {
 
 	@Id
