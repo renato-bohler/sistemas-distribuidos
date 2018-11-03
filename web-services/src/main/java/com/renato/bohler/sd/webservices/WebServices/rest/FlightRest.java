@@ -13,8 +13,11 @@ import com.renato.bohler.sd.webservices.WebServices.api.FlightApi;
 import com.renato.bohler.sd.webservices.WebServices.rn.FlightRn;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
-@Api
+@Api(value = "/flight")
 @Path("/flight")
 @RequestScoped
 public class FlightRest {
@@ -24,6 +27,8 @@ public class FlightRest {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(nickname = "listar-voos", value = "Lista todos os vôos", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@ApiResponses(@ApiResponse(code = 201, message = "Vôos listados", response = FlightApi.class))
 	public List<FlightApi> listar() {
 		return flightRn.listar();
 	}

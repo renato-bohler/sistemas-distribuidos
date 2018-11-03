@@ -13,8 +13,11 @@ import com.renato.bohler.sd.webservices.WebServices.api.AccommodationApi;
 import com.renato.bohler.sd.webservices.WebServices.rn.AccommodationRn;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
-@Api
+@Api(value = "/accommodation")
 @Path("/accommodation")
 @RequestScoped
 public class AccommodationRest {
@@ -24,6 +27,8 @@ public class AccommodationRest {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(nickname = "listar-hospedagem", value = "Lista todos as hospedagens", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@ApiResponses(@ApiResponse(code = 201, message = "Hospedagens listadas", response = AccommodationApi.class))
 	public List<AccommodationApi> listar() {
 		return accommodationRn.listar();
 	}
