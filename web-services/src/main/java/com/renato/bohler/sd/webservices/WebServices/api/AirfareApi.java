@@ -2,26 +2,10 @@ package com.renato.bohler.sd.webservices.WebServices.api;
 
 public class AirfareApi {
 
-	private Long numeroPessoas;
-	private Long valorTotal;
 	private FlightApi ida;
 	private FlightApi volta;
-
-	public Long getNumeroPessoas() {
-		return numeroPessoas;
-	}
-
-	public void setNumeroPessoas(Long numeroPessoas) {
-		this.numeroPessoas = numeroPessoas;
-	}
-
-	public Long getValorTotal() {
-		return valorTotal;
-	}
-
-	public void setValorTotal(Long valorTotal) {
-		this.valorTotal = valorTotal;
-	}
+	private Long numeroPessoas;
+	private Long valorTotal;
 
 	public FlightApi getIda() {
 		return ida;
@@ -39,4 +23,19 @@ public class AirfareApi {
 		this.volta = volta;
 	}
 
+	public Long getNumeroPessoas() {
+		return numeroPessoas;
+	}
+
+	public void setNumeroPessoas(Long numeroPessoas) {
+		this.numeroPessoas = numeroPessoas;
+	}
+
+	public Long getValorTotal() {
+		return valorTotal;
+	}
+
+	public void setValorTotal(Long valorTotal) {
+		this.valorTotal = valorTotal;
+	}
 }

@@ -1,6 +1,5 @@
 package com.renato.bohler.sd.webservices.WebServices.rest;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -12,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.renato.bohler.sd.webservices.WebServices.api.AirfareApi;
 import com.renato.bohler.sd.webservices.WebServices.rn.AirfareRn;
+import com.renato.bohler.sd.webservices.WebServices.util.DateUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,14 +25,18 @@ public class AirfareRest {
 	@Inject
 	private AirfareRn airfareRn;
 
+	@Inject
+	private DateUtil dateUtil;
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(nickname = "listar-passagens", value = "Lista as passagens de acordo com os filtros", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	@ApiResponses(@ApiResponse(code = 201, message = "Passagens listadas", response = AirfareApi.class))
 	public List<AirfareApi> listar(@QueryParam("origem") String origem, @QueryParam("destino") String destino,
-			@QueryParam("dataIda") Date dataIda, @QueryParam("dataVolta") Date dataVolta,
+			@QueryParam("dataIda") String dataIda, @QueryParam("dataVolta") String dataVolta,
 			@QueryParam("numeroPessoas") Long numeroPessoas) {
-		return airfareRn.listar(origem, destino, dataIda, dataVolta, numeroPessoas);
+		return airfareRn.listar(origem, destino, dateUtil.getDateFromString(dataIda),
+				dateUtil.getDateFromString(dataVolta), numeroPessoas);
 	}
 
 }

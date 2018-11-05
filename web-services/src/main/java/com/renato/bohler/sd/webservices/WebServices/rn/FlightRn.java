@@ -18,7 +18,7 @@ public class FlightRn {
 		return this.converterListaParaApi(flightDao.listar());
 	}
 
-	private FlightApi converterParaApi(Flight entidade) {
+	public FlightApi converterParaApi(Flight entidade) {
 		FlightApi api = new FlightApi();
 		api.setId(entidade.getId());
 		api.setOrigem(entidade.getOrigem());
