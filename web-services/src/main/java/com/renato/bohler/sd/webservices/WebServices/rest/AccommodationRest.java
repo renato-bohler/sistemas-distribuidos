@@ -44,7 +44,7 @@ public class AccommodationRest {
 	@POST
 	@Path("/comprar")
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(nickname = "comprar-hospedagem", value = "Compra uma hospedagem pelo seu ID", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@ApiOperation(nickname = "comprar-hospedagem", value = "Compra uma hospedagem", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	@ApiResponses({ @ApiResponse(code = 201, message = "Hospedagem comprada"),
 			@ApiResponse(code = 400, message = "Hospedagem não disponível") })
 	public Response comprar(AccommodationApi hospedagemApi) {

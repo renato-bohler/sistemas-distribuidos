@@ -4,10 +4,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.renato.bohler.sd.webservices.WebServices.api.AirfareApi;
 import com.renato.bohler.sd.webservices.WebServices.rn.AirfareRn;
@@ -37,6 +39,19 @@ public class AirfareRest {
 			@QueryParam("numeroPessoas") Long numeroPessoas) {
 		return airfareRn.listar(origem, destino, dateUtil.getDateFromString(dataIda),
 				dateUtil.getDateFromString(dataVolta), numeroPessoas);
+	}
+
+	@POST
+	@Path("/comprar")
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(nickname = "comprar-passagem", value = "Compra uma passagem", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@ApiResponses({ @ApiResponse(code = 201, message = "Passagem comprada"),
+			@ApiResponse(code = 400, message = "Passagem não disponível") })
+	public Response comprar(AirfareApi passagemApi) {
+		if (airfareRn.comprar(passagemApi)) {
+			return Response.ok().build();
+		}
+		return Response.status(400).build();
 	}
 
 }

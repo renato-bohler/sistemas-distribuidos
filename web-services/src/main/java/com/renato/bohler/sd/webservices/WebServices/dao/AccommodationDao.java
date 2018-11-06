@@ -82,7 +82,6 @@ public class AccommodationDao {
 		} catch (Exception e) {
 		}
 		return hospedagem;
-
 	}
 
 	public void atualizar(Accommodation hospedagem) {
