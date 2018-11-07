@@ -56,7 +56,7 @@ public class AirfareRn {
 		return Boolean.TRUE;
 	}
 
-	private Boolean validarPassagem(Flight ida, Flight volta, AirfareApi passagemApi) {
+	public Boolean validarPassagem(Flight ida, Flight volta, AirfareApi passagemApi) {
 		if ((ida != null && ida.getVagas() >= passagemApi.getNumeroPessoas())
 				&& (volta == null || volta.getVagas() >= passagemApi.getNumeroPessoas())) {
 			return Boolean.TRUE;

@@ -37,7 +37,7 @@ public class AccommodationRn {
 		return Boolean.TRUE;
 	}
 
-	private Boolean validarHospedagem(Accommodation hospedagem, AccommodationApi hospedagemApi) {
+	public Boolean validarHospedagem(Accommodation hospedagem, AccommodationApi hospedagemApi) {
 		if (hospedagem == null || hospedagem.getNumeroPessoas() < hospedagemApi.getNumeroPessoas()
 				|| hospedagem.getNumeroQuartos() < hospedagemApi.getNumeroQuartos()) {
 			return Boolean.FALSE;
