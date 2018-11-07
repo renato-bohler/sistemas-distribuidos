@@ -64,7 +64,7 @@ public class AirfareRn {
 		return Boolean.FALSE;
 	}
 
-	private AirfareApi converterParaApi(AirfareVo vo, Long numeroPessoas) {
+	public AirfareApi converterParaApi(AirfareVo vo, Long numeroPessoas) {
 		AirfareApi api = new AirfareApi();
 
 		api.setNumeroPessoas(numeroPessoas);

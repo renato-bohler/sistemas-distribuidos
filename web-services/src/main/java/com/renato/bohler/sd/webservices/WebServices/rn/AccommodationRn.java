@@ -45,7 +45,7 @@ public class AccommodationRn {
 		return Boolean.TRUE;
 	}
 
-	private AccommodationApi converterParaApi(Accommodation entidade, Long numeroQuartos, Long numeroPessoas) {
+	public AccommodationApi converterParaApi(Accommodation entidade, Long numeroQuartos, Long numeroPessoas) {
 		AccommodationApi api = new AccommodationApi();
 
 		api.setId(entidade.getId());
