@@ -113,6 +113,10 @@ public slots:
     void airfaresRequestFinished(QNetworkReply*);
     void accommodationsRequestFinished(QNetworkReply*);
     void packagesRequestFinished(QNetworkReply*);
+
+    void buyAirfare(QModelIndex);
+    void buyAccommodation(QModelIndex);
+    void buyPackage(QModelIndex);
 };
 
 #endif // WEBSERVICESWIDGET_H

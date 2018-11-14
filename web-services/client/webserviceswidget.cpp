@@ -19,6 +19,25 @@ WebServicesWidget::WebServicesWidget(QWidget *parent)
     setupPackages();
 }
 
+void WebServicesWidget::buyAirfare(QModelIndex index) {
+    QJsonObject airfare = this->airfareTableModelData->getJsonObject(index);
+
+    // Setup the webservice url
+    QUrl serviceUrl = QUrl("http://localhost:8080/web-services/airfare/comprar");
+
+    // Call the webservice
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+
+    QNetworkRequest request(serviceUrl);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(
+    QString("application/json")));
+
+    manager->post(request, QJsonDocument(airfare).toJson());
+
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this,
+        SLOT(searchAirfares()));
+}
+
 void WebServicesWidget::searchAirfares() {
     this->loadAirfares(air_origem->text(), air_destino->text(), air_dataIda->text(), air_dataVolta->text(), air_numeroPessoas->text());
 }
@@ -42,8 +61,9 @@ void WebServicesWidget::loadAirfares(QString origem, QString destino, QString da
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(
     QString("application/json")));
 
-   connect(manager, SIGNAL(finished(QNetworkReply*)), this,
-    SLOT(airfaresRequestFinished(QNetworkReply*)));
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this,
+        SLOT(airfaresRequestFinished(QNetworkReply*)));
+
     manager->get(request);
 }
 
@@ -51,6 +71,25 @@ void WebServicesWidget::airfaresRequestFinished(QNetworkReply* reply){
     QByteArray buffer = reply->readAll();
     QJsonDocument jsonDocument(QJsonDocument::fromJson(buffer));
     airfareTableModelData->setJson(jsonDocument);
+}
+
+void WebServicesWidget::buyAccommodation(QModelIndex index) {
+    QJsonObject accommodation = this->accommodationTableModelData->getJsonObject(index);
+
+    // Setup the webservice url
+    QUrl serviceUrl = QUrl("http://localhost:8080/web-services/accommodation/comprar");
+
+    // Call the webservice
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+
+    QNetworkRequest request(serviceUrl);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(
+    QString("application/json")));
+
+    manager->post(request, QJsonDocument(accommodation).toJson());
+
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this,
+        SLOT(searchAccommodations()));
 }
 
 void WebServicesWidget::searchAccommodations() {
@@ -76,8 +115,9 @@ void WebServicesWidget::loadAccommodations(QString cidade, QString dataEntrada, 
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(
     QString("application/json")));
 
-   connect(manager, SIGNAL(finished(QNetworkReply*)), this,
-    SLOT(accommodationsRequestFinished(QNetworkReply*)));
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this,
+        SLOT(accommodationsRequestFinished(QNetworkReply*)));
+
     manager->get(request);
 }
 
@@ -85,6 +125,25 @@ void WebServicesWidget::accommodationsRequestFinished(QNetworkReply* reply){
     QByteArray buffer = reply->readAll();
     QJsonDocument jsonDocument(QJsonDocument::fromJson(buffer));
     accommodationTableModelData->setJson(jsonDocument);
+}
+
+void WebServicesWidget::buyPackage(QModelIndex index) {
+    QJsonObject package = this->packageTableModelData->getJsonObject(index);
+
+    // Setup the webservice url
+    QUrl serviceUrl = QUrl("http://localhost:8080/web-services/package/comprar");
+
+    // Call the webservice
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+
+    QNetworkRequest request(serviceUrl);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(
+    QString("application/json")));
+
+    manager->post(request, QJsonDocument(package).toJson());
+
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this,
+        SLOT(searchPackages()));
 }
 
 void WebServicesWidget::searchPackages() {
@@ -111,8 +170,9 @@ void WebServicesWidget::loadPackages(QString origem, QString destino, QString da
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant(
     QString("application/json")));
 
-   connect(manager, SIGNAL(finished(QNetworkReply*)), this,
-    SLOT(packagesRequestFinished(QNetworkReply*)));
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this,
+        SLOT(packagesRequestFinished(QNetworkReply*)));
+
     manager->get(request);
 }
 
@@ -130,10 +190,14 @@ void WebServicesWidget::setupAirfares() {
     header.push_back( QJsonTableModel::Heading({ {"title","Data volta"},  {"lv1","volta"},   {"index","data"} }) );
     header.push_back( QJsonTableModel::Heading({ {"title","Nº pessoas"},  {"index","numeroPessoas"} }) );
     header.push_back( QJsonTableModel::Heading({ {"title","Valor total"},  {"index","valorTotal"} }) );
+    header.push_back( QJsonTableModel::Heading({ {"title","Ação"},          {"index",""} }) );
 
     airfareTableView = new QTableView;
     airfareTableModelData = new QJsonTableModel( header, this );
     airfareTableView->setModel(airfareTableModelData);
+    ButtonDelegate *m_buttonDelegate = new ButtonDelegate(this);
+    connect(m_buttonDelegate, SIGNAL (pressed(QModelIndex)), this, SLOT (buyAirfare(QModelIndex)));
+    airfareTableView->setItemDelegateForColumn(6, m_buttonDelegate);
 
     QByteArray json = "[]";
     QJsonDocument jsonDocument = QJsonDocument::fromJson(json);
@@ -179,13 +243,14 @@ void WebServicesWidget::setupAccommodations() {
     header.push_back( QJsonTableModel::Heading({ {"title","Nº quartos"},    {"index","numeroQuartos"} }) );
     header.push_back( QJsonTableModel::Heading({ {"title","Nº pessoas"},    {"index","numeroPessoas"} }) );
     header.push_back( QJsonTableModel::Heading({ {"title","Valor total"},   {"index","valorTotal"} }) );
-    // header.push_back( QJsonTableModel::Heading({ {"title","Ação"},          {"index",""} }) );
+    header.push_back( QJsonTableModel::Heading({ {"title","Ação"},          {"index",""} }) );
 
     accommodationTableView = new QTableView;
     accommodationTableModelData = new QJsonTableModel( header, this );
     accommodationTableView->setModel(accommodationTableModelData);
-    // ButtonDelegate *m_buttonDelegate = new ButtonDelegate(this);
-    // accommodationTableView->setItemDelegateForColumn(6, m_buttonDelegate);
+    ButtonDelegate *m_buttonDelegate = new ButtonDelegate(this);
+    connect(m_buttonDelegate, SIGNAL (pressed(QModelIndex)), this, SLOT (buyAccommodation(QModelIndex)));
+    accommodationTableView->setItemDelegateForColumn(6, m_buttonDelegate);
 
     QByteArray json = "[]";
     QJsonDocument jsonDocument = QJsonDocument::fromJson(json);
@@ -235,10 +300,14 @@ void WebServicesWidget::setupPackages() {
     header.push_back( QJsonTableModel::Heading({ {"title","Preço/quarto"},  {"lv1","hospedagem"},   {"index","precoPorQuarto"} }) );
     header.push_back( QJsonTableModel::Heading({ {"title","Preço/pessoa"},  {"lv1","hospedagem"},   {"index","precoPorPessoa"} }) );
     header.push_back( QJsonTableModel::Heading({ {"title","Valor total"},   {"index","valorTotal"} }) );
+    header.push_back( QJsonTableModel::Heading({ {"title","Ação"},          {"index",""} }) );
 
     packageTableView = new QTableView;
     packageTableModelData = new QJsonTableModel( header, this );
     packageTableView->setModel(packageTableModelData);
+    ButtonDelegate *m_buttonDelegate = new ButtonDelegate(this);
+    connect(m_buttonDelegate, SIGNAL (pressed(QModelIndex)), this, SLOT (buyPackage(QModelIndex)));
+    packageTableView->setItemDelegateForColumn(9, m_buttonDelegate);
 
     QByteArray json = "[]";
     QJsonDocument jsonDocument = QJsonDocument::fromJson(json);
