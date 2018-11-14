@@ -3,16 +3,19 @@
 #include <QDateTime>
 #include <QPushButton>
 
+// Classe QJsonTableModel, model de JSON para QTableView
 QJsonTableModel::QJsonTableModel( const QJsonTableModel::Header& header, QObject * parent )
     : QAbstractTableModel( parent )
     , m_header( header ) {
 
 }
 
+// Método para inicializar os dados do model (objeto)
 bool QJsonTableModel::setJson(const QJsonDocument &json) {
     return setJson( json.array() );
 }
 
+// Método para inicializar os dados do model (array)
 bool QJsonTableModel::setJson( const QJsonArray& array ) {
     beginResetModel();
     m_json = array;
@@ -20,6 +23,7 @@ bool QJsonTableModel::setJson( const QJsonArray& array ) {
     return true;
 }
 
+// Método para definir o cabeçalho da tabela
 QVariant QJsonTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if( role != Qt::DisplayRole ) {
         return QVariant();
@@ -34,20 +38,23 @@ QVariant QJsonTableModel::headerData(int section, Qt::Orientation orientation, i
 
 }
 
+// Método para contagem das linhas da tabela
 int QJsonTableModel::rowCount(const QModelIndex &parent ) const {
     return m_json.size();
 }
 
+// Método para contagem das colunas da tabela
 int QJsonTableModel::columnCount(const QModelIndex &parent ) const {
     return m_header.size();
 }
 
-
+// Método que retorna um objeto da tabela, dado seu index
 QJsonObject QJsonTableModel::getJsonObject( const QModelIndex &index ) const {
     const QJsonValue& value = m_json[index.row() ];
     return value.toObject();
 }
 
+// Método para renderização dos dados da tabela
 QVariant QJsonTableModel::data( const QModelIndex &index, int role ) const {
     switch( role ) {
     case Qt::DisplayRole: {

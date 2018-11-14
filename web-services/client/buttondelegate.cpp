@@ -8,10 +8,12 @@
 #include <QStyleOption>
 #include <QDesktopWidget>
 
+// Classe ButtonDelegate, utilizada como botão dentro da tabela
 ButtonDelegate::ButtonDelegate(QObject *parent) :
     QItemDelegate(parent) {
 }
 
+// Método que renderiza o botão
 void ButtonDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     QPair<QStyleOptionButton*, QStyleOptionButton*>* buttons = m_btns.value(index);
     if (!buttons) {
@@ -31,6 +33,7 @@ void ButtonDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
     QApplication::style()->drawControl(QStyle::CE_PushButton, buttons->first, painter);
 }
 
+// Método para manipular eventos acionados no botão
 bool ButtonDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) {
     if (event->type() == QEvent::MouseButtonRelease) {
         QMouseEvent *e = (QMouseEvent*) event;
@@ -44,8 +47,3 @@ bool ButtonDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const
     }
 }
 
-void ButtonDelegate::showMsg(QString str) {
-    QMessageBox msg;
-    msg.setText(str);
-    msg.exec();
-}

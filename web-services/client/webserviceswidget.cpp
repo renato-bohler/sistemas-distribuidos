@@ -12,6 +12,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+/* Classe WebServicesWidget contém toda a lógica das abas de
+ * passagens, hospedagens e pacotes.
+ */
 WebServicesWidget::WebServicesWidget(QWidget *parent)
     : QTabWidget(parent) {
     setupAirfares();
@@ -19,13 +22,14 @@ WebServicesWidget::WebServicesWidget(QWidget *parent)
     setupPackages();
 }
 
+// Método slot que realiza chamada para compra de passagens
 void WebServicesWidget::buyAirfare(QModelIndex index) {
     QJsonObject airfare = this->airfareTableModelData->getJsonObject(index);
 
-    // Setup the webservice url
+    // Inicializa a URL do webservice
     QUrl serviceUrl = QUrl("http://localhost:8080/web-services/airfare/comprar");
 
-    // Call the webservice
+    // Chama o webservice
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
 
     QNetworkRequest request(serviceUrl);
@@ -38,12 +42,14 @@ void WebServicesWidget::buyAirfare(QModelIndex index) {
         SLOT(searchAirfares()));
 }
 
+// Método slot que executa a busca por passagens
 void WebServicesWidget::searchAirfares() {
     this->loadAirfares(air_origem->text(), air_destino->text(), air_dataIda->text(), air_dataVolta->text(), air_numeroPessoas->text());
 }
 
+// Método que realiza chamada para consulta de passagens
 void WebServicesWidget::loadAirfares(QString origem, QString destino, QString dataIda, QString dataVolta, QString numeroPessoas) {
-    // Setup the webservice url
+    // Inicializa a URL do webservice
     QUrl serviceUrl = QUrl("http://localhost:8080/web-services/airfare");
 
     QUrlQuery query;
@@ -54,7 +60,7 @@ void WebServicesWidget::loadAirfares(QString origem, QString destino, QString da
     query.addQueryItem("numeroPessoas", numeroPessoas);
     serviceUrl.setQuery(query);
 
-    // Call the webservice
+    // Chama o webservice
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
 
     QNetworkRequest request(serviceUrl);
@@ -67,19 +73,21 @@ void WebServicesWidget::loadAirfares(QString origem, QString destino, QString da
     manager->get(request);
 }
 
+// Método slot callback chamado ao finalizar a chamada de consulta de passagens
 void WebServicesWidget::airfaresRequestFinished(QNetworkReply* reply){
     QByteArray buffer = reply->readAll();
     QJsonDocument jsonDocument(QJsonDocument::fromJson(buffer));
     airfareTableModelData->setJson(jsonDocument);
 }
 
+// Método slot que realiza chamada para compra de hospedagens
 void WebServicesWidget::buyAccommodation(QModelIndex index) {
     QJsonObject accommodation = this->accommodationTableModelData->getJsonObject(index);
 
-    // Setup the webservice url
+    // Inicializa a URL do webservice
     QUrl serviceUrl = QUrl("http://localhost:8080/web-services/accommodation/comprar");
 
-    // Call the webservice
+    // Chama o webservice
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
 
     QNetworkRequest request(serviceUrl);
@@ -92,12 +100,14 @@ void WebServicesWidget::buyAccommodation(QModelIndex index) {
         SLOT(searchAccommodations()));
 }
 
+// Método slot que executa a busca por hospedagens
 void WebServicesWidget::searchAccommodations() {
     this->loadAccommodations(acc_cidade->text(), acc_dataEntrada->text(), acc_dataSaida->text(), acc_numeroQuartos->text(), acc_numeroPessoas->text());
 }
 
+// Método que realiza chamada para consulta de hospedagens
 void WebServicesWidget::loadAccommodations(QString cidade, QString dataEntrada, QString dataSaida, QString numeroQuartos, QString numeroPessoas) {
-    // Setup the webservice url
+    // Inicializa a URL do webservice
     QUrl serviceUrl = QUrl("http://localhost:8080/web-services/accommodation");
 
     QUrlQuery query;
@@ -108,7 +118,7 @@ void WebServicesWidget::loadAccommodations(QString cidade, QString dataEntrada, 
     query.addQueryItem("numeroPessoas", numeroPessoas);
     serviceUrl.setQuery(query);
 
-    // Call the webservice
+    // Chama o webservice
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
 
     QNetworkRequest request(serviceUrl);
@@ -121,19 +131,21 @@ void WebServicesWidget::loadAccommodations(QString cidade, QString dataEntrada, 
     manager->get(request);
 }
 
+// Método slot callback chamado ao finalizar a chamada de consulta de hospedagens
 void WebServicesWidget::accommodationsRequestFinished(QNetworkReply* reply){
     QByteArray buffer = reply->readAll();
     QJsonDocument jsonDocument(QJsonDocument::fromJson(buffer));
     accommodationTableModelData->setJson(jsonDocument);
 }
 
+// Método slot que realiza chamada para compra de pacotes
 void WebServicesWidget::buyPackage(QModelIndex index) {
     QJsonObject package = this->packageTableModelData->getJsonObject(index);
 
-    // Setup the webservice url
+    // Inicializa a URL do webservice
     QUrl serviceUrl = QUrl("http://localhost:8080/web-services/package/comprar");
 
-    // Call the webservice
+    // Chama o webservice
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
 
     QNetworkRequest request(serviceUrl);
@@ -146,12 +158,14 @@ void WebServicesWidget::buyPackage(QModelIndex index) {
         SLOT(searchPackages()));
 }
 
+// Método slot que executa a busca por pacotes
 void WebServicesWidget::searchPackages() {
     this->loadPackages(pkg_origem->text(), pkg_destino->text(), pkg_dataIda->text(), pkg_dataVolta->text(), pkg_numeroQuartos->text(), pkg_numeroPessoas->text());
 }
 
+// Método que realiza chamada para consulta de pacotes
 void WebServicesWidget::loadPackages(QString origem, QString destino, QString dataIda, QString dataVolta, QString numeroQuartos, QString numeroPessoas) {
-    // Setup the webservice url
+    // Inicializa a URL do webservice
     QUrl serviceUrl = QUrl("http://localhost:8080/web-services/package");
 
     QUrlQuery query;
@@ -163,7 +177,7 @@ void WebServicesWidget::loadPackages(QString origem, QString destino, QString da
     query.addQueryItem("numeroPessoas", numeroPessoas);
     serviceUrl.setQuery(query);
 
-    // Call the webservice
+    // Chama o webservice
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
 
     QNetworkRequest request(serviceUrl);
@@ -176,12 +190,14 @@ void WebServicesWidget::loadPackages(QString origem, QString destino, QString da
     manager->get(request);
 }
 
+// Método slot callback chamado ao finalizar a chamada de consulta de pacotes
 void WebServicesWidget::packagesRequestFinished(QNetworkReply* reply){
     QByteArray buffer = reply->readAll();
     QJsonDocument jsonDocument(QJsonDocument::fromJson(buffer));
     packageTableModelData->setJson(jsonDocument);
 }
 
+// Método que inicializa a aba de passagens
 void WebServicesWidget::setupAirfares() {
     QJsonTableModel::Header header;
     header.push_back( QJsonTableModel::Heading({ {"title","Origem"},  {"lv1","ida"},   {"index","origem"} }) );
@@ -235,6 +251,7 @@ void WebServicesWidget::setupAirfares() {
     addTab(widget, "Passagens");
 }
 
+// Método que inicializa a aba de hospedagens
 void WebServicesWidget::setupAccommodations() {
     QJsonTableModel::Header header;
     header.push_back( QJsonTableModel::Heading({ {"title","Cidade"},        {"index","cidade"} }) );
@@ -289,6 +306,7 @@ void WebServicesWidget::setupAccommodations() {
     addTab(widget, "Hospedagens");
 }
 
+// Método que inicializa a aba de pacotes
 void WebServicesWidget::setupPackages() {
     QJsonTableModel::Header header;
     header.push_back( QJsonTableModel::Heading({ {"title","Origem"},        {"lv1","passagem"},     {"lv2", "ida"},    {"index","origem"} }) );
