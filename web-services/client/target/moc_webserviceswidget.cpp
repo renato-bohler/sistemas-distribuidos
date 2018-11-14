@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_WebServicesWidget_t {
-    QByteArrayData data[9];
-    char stringdata0[163];
+    QByteArrayData data[13];
+    char stringdata0[214];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -39,14 +39,19 @@ QT_MOC_LITERAL(4, 55, 14), // "searchPackages"
 QT_MOC_LITERAL(5, 70, 23), // "airfaresRequestFinished"
 QT_MOC_LITERAL(6, 94, 14), // "QNetworkReply*"
 QT_MOC_LITERAL(7, 109, 29), // "accommodationsRequestFinished"
-QT_MOC_LITERAL(8, 139, 23) // "packagesRequestFinished"
+QT_MOC_LITERAL(8, 139, 23), // "packagesRequestFinished"
+QT_MOC_LITERAL(9, 163, 10), // "buyAirfare"
+QT_MOC_LITERAL(10, 174, 11), // "QModelIndex"
+QT_MOC_LITERAL(11, 186, 16), // "buyAccommodation"
+QT_MOC_LITERAL(12, 203, 10) // "buyPackage"
 
     },
     "WebServicesWidget\0searchAirfares\0\0"
     "searchAccommodations\0searchPackages\0"
     "airfaresRequestFinished\0QNetworkReply*\0"
     "accommodationsRequestFinished\0"
-    "packagesRequestFinished"
+    "packagesRequestFinished\0buyAirfare\0"
+    "QModelIndex\0buyAccommodation\0buyPackage"
 };
 #undef QT_MOC_LITERAL
 
@@ -56,7 +61,7 @@ static const uint qt_meta_data_WebServicesWidget[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       9,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -64,12 +69,15 @@ static const uint qt_meta_data_WebServicesWidget[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   44,    2, 0x0a /* Public */,
-       3,    0,   45,    2, 0x0a /* Public */,
-       4,    0,   46,    2, 0x0a /* Public */,
-       5,    1,   47,    2, 0x0a /* Public */,
-       7,    1,   50,    2, 0x0a /* Public */,
-       8,    1,   53,    2, 0x0a /* Public */,
+       1,    0,   59,    2, 0x0a /* Public */,
+       3,    0,   60,    2, 0x0a /* Public */,
+       4,    0,   61,    2, 0x0a /* Public */,
+       5,    1,   62,    2, 0x0a /* Public */,
+       7,    1,   65,    2, 0x0a /* Public */,
+       8,    1,   68,    2, 0x0a /* Public */,
+       9,    1,   71,    2, 0x0a /* Public */,
+      11,    1,   74,    2, 0x0a /* Public */,
+      12,    1,   77,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,
@@ -78,6 +86,9 @@ static const uint qt_meta_data_WebServicesWidget[] = {
     QMetaType::Void, 0x80000000 | 6,    2,
     QMetaType::Void, 0x80000000 | 6,    2,
     QMetaType::Void, 0x80000000 | 6,    2,
+    QMetaType::Void, 0x80000000 | 10,    2,
+    QMetaType::Void, 0x80000000 | 10,    2,
+    QMetaType::Void, 0x80000000 | 10,    2,
 
        0        // eod
 };
@@ -94,6 +105,9 @@ void WebServicesWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
         case 3: _t->airfaresRequestFinished((*reinterpret_cast< QNetworkReply*(*)>(_a[1]))); break;
         case 4: _t->accommodationsRequestFinished((*reinterpret_cast< QNetworkReply*(*)>(_a[1]))); break;
         case 5: _t->packagesRequestFinished((*reinterpret_cast< QNetworkReply*(*)>(_a[1]))); break;
+        case 6: _t->buyAirfare((*reinterpret_cast< QModelIndex(*)>(_a[1]))); break;
+        case 7: _t->buyAccommodation((*reinterpret_cast< QModelIndex(*)>(_a[1]))); break;
+        case 8: _t->buyPackage((*reinterpret_cast< QModelIndex(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
@@ -153,13 +167,13 @@ int WebServicesWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 9)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 9;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 6)
+        if (_id < 9)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 9;
     }
     return _id;
 }
